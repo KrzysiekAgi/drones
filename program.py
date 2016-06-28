@@ -1,7 +1,7 @@
 import math as m
 
 
-def azimuth(fi1, fi2, L1, L2, H):
+def azimuth(lat_an, lat_dr, lon_an, lon_dr):
     numerator = m.sin(L2)
     denominator = m.cos(fi1) * m.tan(fi2) - m.sin(fi1) * m.cos(L2)
     azimuth_in_radians = m.atan(numerator / denominator)
@@ -9,7 +9,7 @@ def azimuth(fi1, fi2, L1, L2, H):
     return azimuth_in_degrees
 
 
-def elevation(fi1, fi2, L1, L2, H):
+def elevation(lat_an, lat_dr, h_drone):
     '''source: https://en.wikipedia.org/wiki/Azimuth
     https://pl.wikipedia.org/wiki/Ortodroma
     fi1 - site's latitude, fi2 - drone's latitude,
