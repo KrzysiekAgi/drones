@@ -12,7 +12,6 @@ def rotate_to_position_msg(device_address_in_hex, position_in_steps):
 def move_up_down_msg(device_address_in_hex, position_in_steps):
     return "ble"
 
-
 def reference_point_msg(device_address_in_hex):
     return "ble"
 
@@ -29,4 +28,4 @@ def encode_rotor_position_msg(msg):
     return -23432
 
 def encode_gprmc_msg(msg):
-    rmc_data(1, )
+    rmc_position(1, 1, 1, 1)
