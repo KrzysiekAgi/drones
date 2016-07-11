@@ -24,8 +24,8 @@ def sleep_msg(device_address_in_hex):
 def enable_device_msg(device_address_in_hex):
     return "ble"
 
-def encode_rotor_position_msg(msg):
+def decode_tilt_msg(msg):
     return -23432
 
-def encode_gprmc_msg(msg):
+def decode_gprmc_msg(msg):
     rmc_position(1, 1, 1, 1)
