@@ -13,35 +13,35 @@ def are_floats_close(a, b, relative_difference):
 
 class Test_azimuth(unittest.TestCase):
     def test_simple_north(self):
-        a = azimuth(0, 0, 0, 1)
+        a = azimuth(0, 0, 0, 0.1)
         self.assertAlmostEqual(a, 0)
 
     def test_simple_west(self):
-        a = azimuth(0, 0, -1, 0)
+        a = azimuth(0, 0, -0.1, 0)
         self.assertAlmostEqual(a, 270)
 
     def test_simple_east(self):
-        a = azimuth(0, 0, 1, 0) 
+        a = azimuth(0, 0, 0.1, 0) 
         self.assertAlmostEqual(a, 90)
 
     def test_simple_south(self):
-        a = azimuth(0, 0, 0, -1)
+        a = azimuth(0, 0, 0, -0.1)
         self.assertAlmostEqual(a, 180)
 
     def test_simple_north_west(self):
-        a = azimuth(0, 0, -1, 1)
+        a = azimuth(0, 0, -0.1, 0.1)
         self.assertAlmostEqual(a, 315)
 
     def test_simple_south_west(self):
-        a = azimuth(0, 0, -1, -1)
+        a = azimuth(0, 0, -0.1, -0.1)
         self.assertAlmostEqual(a, 225)
 
     def test_simple_north_east(self):
-        a = azimuth(0, 0, 1, 1)
-        self.assertAlmostEqual(a, 45) #ok
+        a = azimuth(0, 0, 0.1, 0.1)
+        self.assertAlmostEqual(a, 45) 
 
     def test_simple_south_east(self):
-        a = azimuth(0, 0, 1, -1)
+        a = azimuth(0, 0, 0.1, -0.1)
         self.assertAlmostEqual(a, 135)
 
 if __name__ == '__main__':

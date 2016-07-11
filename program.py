@@ -1,15 +1,18 @@
 import math as m
 
 
-def azimuth(lat_an, lat_dr, lon_an, lon_dr):
+def azimuth(lat_an, lon_an, lat_dr, lon_dr):
     numerator = m.sin(m.radians(lon_dr))
     denominator = m.cos(m.radians(lat_an)) * m.tan(m.radians(lat_dr)) - m.sin(m.radians(lat_an)) * m.cos(m.radians(lon_dr))
-    azimuth_in_radians = m.atan(numerator / denominator)
+    azimuth_in_radians = m.atan2(denominator, numerator)
     azimuth_in_degrees = m.degrees(azimuth_in_radians)
-    return azimuth_in_degrees
+    if azimuth_in_degrees >= 0: 
+        return azimuth_in_degrees
+    else:
+        return azimuth_in_degrees + 360
 
 
-def elevation(lat_an, lat_dr, h_drone, lon_an, lon_dr):
+def elevation(lat_an, lon_an, lat_dr, h_drone, lon_dr):
     '''source: https://en.wikipedia.org/wiki/Azimuth
     https://pl.wikipedia.org/wiki/Ortodroma'''
     some_radians = m.acos(m.sin(m.radians(lat_an)) * m.sin(m.radians(lat_dr)) + m.cos(m.radians(lat_an)) * m.cos(m.radians(lat_dr)) * m.cos(m.radians(lon_dr - lon_an)))
@@ -20,4 +23,3 @@ def elevation(lat_an, lat_dr, h_drone, lon_an, lon_dr):
     leng = m.sqrt(r_pow * 2 - 2 * r_pow * m.cos(alfa))  # in km
     elev = m.asin(h_drone / leng)
     return elev
-
