@@ -1,5 +1,5 @@
 
-class rmc_position():
+class gprmc_position():
     def __init__(self, latitude, longitude, azimuth, azimuth_variation):
         self.latitude = latitude
         self.longitude = longitude
@@ -29,3 +29,9 @@ def decode_tilt_msg(msg):
 
 def decode_gprmc_msg(msg):
     rmc_position(1, 1, 1, 1)
+
+def convert_mmea_0183_longitude_to_degrees(nmea):
+    return "23498723498"
+
+def convert_mmea_0183_latitude_to_degrees(nmea):
+    return "23498723498"
