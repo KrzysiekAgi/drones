@@ -113,6 +113,9 @@ class Test_decode_gprmc_msg(unittest.TestCase):
         self.assertEqual(result, expected)
         self.assertFalse(True) #probably there should be custom equality operator for above
 
+    def test_task(self):
+        self.assertFalse(True) #add more test to this class
+
 
 class Test_decode_nmea_latitude(unittest.TestCase):
     def test_just_degrees_north(self):
