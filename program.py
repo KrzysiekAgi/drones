@@ -12,7 +12,7 @@ def azimuth(lat_an, lon_an, lat_dr, lon_dr):
         return azimuth_in_degrees + 360
 
 
-def elevation(lat_an, lon_an, lat_dr, h_drone, lon_dr):
+def elevation(lat_an, lon_an, h_an, lat_dr, lon_dr, h_dr):
     '''source: https://en.wikipedia.org/wiki/Azimuth
     https://pl.wikipedia.org/wiki/Ortodroma'''
     some_radians = m.acos(m.sin(m.radians(lat_an)) * m.sin(m.radians(lat_dr)) + m.cos(m.radians(lat_an)) * m.cos(m.radians(lat_dr)) * m.cos(m.radians(lon_dr - lon_an)))

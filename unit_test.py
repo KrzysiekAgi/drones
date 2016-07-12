@@ -1,5 +1,5 @@
 import unittest
-from program import azimuth
+from program import azimuth, elevation
 
 
 def are_floats_close(a, b, relative_difference):
@@ -21,7 +21,7 @@ class Test_azimuth(unittest.TestCase):
         self.assertAlmostEqual(a, 270)
 
     def test_simple_east(self):
-        a = azimuth(0, 0, 0.1, 0) 
+        a = azimuth(0, 0, 0.1, 0)
         self.assertAlmostEqual(a, 90)
 
     def test_simple_south(self):
@@ -38,11 +38,15 @@ class Test_azimuth(unittest.TestCase):
 
     def test_simple_north_east(self):
         a = azimuth(0, 0, 0.1, 0.1)
-        self.assertAlmostEqual(a, 45) 
+        self.assertAlmostEqual(a, 45)
 
     def test_simple_south_east(self):
         a = azimuth(0, 0, 0.1, -0.1)
         self.assertAlmostEqual(a, 135)
+
+class Test_elevation_calculation(unittest.TestCase):
+    def test_above(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main()
