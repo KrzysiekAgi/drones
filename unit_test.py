@@ -62,6 +62,10 @@ class Test_elevation_calculation(unittest.TestCase):
         result = elevation(0, 0, 0, 0, 180, 150)
         self.assertAlmostEqual(result, -90)
 
+    def test_zero_degrees_elevation(self):
+        result = elevation(0, 0, 0, 45, 0, 2638.954605879 * 1000)
+        self.assertAlmostEqual(result, 0)
+
+
 if __name__ == '__main__':
     unittest.main()
-
