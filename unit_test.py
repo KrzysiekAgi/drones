@@ -44,9 +44,23 @@ class Test_azimuth(unittest.TestCase):
         a = azimuth(0, 0, 0.1, -0.1)
         self.assertAlmostEqual(a, 135)
 
+
 class Test_elevation_calculation(unittest.TestCase):
     def test_above(self):
-        pass
+        result = elevation(0, 0, 0, 0, 0, 100)
+        self.assertAlmostEqual(result, 90)
+
+    def test_below(self):
+        result = elevation(0, 0, 0, 0, 0, -100)
+        self.assertAlmostEqual(result, -90)
+
+    def test_different_site_of_earth(self):
+        result = elevation(0, 0, 0, 0, 180, 0)
+        self.assertAlmostEqual(result, -90)
+
+    def test_different_site_of_earth_height_does_not_matter(self):
+        result = elevation(0, 0, 0, 0, 180, 150)
+        self.assertAlmostEqual(result, -90)
 
 if __name__ == '__main__':
     unittest.main()
