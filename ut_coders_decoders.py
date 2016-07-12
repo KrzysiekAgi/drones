@@ -144,5 +144,35 @@ class Test_decode_nmea_latitude(unittest.TestCase):
                           nmea_latitude_to_degrees("1122.3333", "sdf")))
 
 
+class Test_decode_nmea_longitude(unittest.TestCase):
+    def test_just_degrees_north(self):
+        result = nmea_longitude_to_degrees("11100.0000", "E")
+        self.assertAlmostEqual(result, 111)
+
+    def test_just_degrees_south(self):
+        result = nmea_longitude_to_degrees("11100.0000", "W")
+        self.assertAlmostEqual(result, -11)
+
+    def test_just_degrees_west_with_minutes(self):
+        result = nmea_longitude_to_degrees("11122.3333", "W")
+        self.assertAlmostEqual(result, -(111 + 22.3333 / 60))
+
+    def test_just_degrees_east_with_minutes(self):
+        result = nmea_longitude_to_degrees("11122.3333", "E")
+        self.assertAlmostEqual(result, (111 + 22.3333 / 60))
+
+    def test_wrong_string_degrees_short(self):
+        self.assertRaises(NameError("bad string",
+                          nmea_longitude_to_degrees("122.3333", "W")))
+
+    def test_wrong_string__minutes_short(self):
+        self.assertRaises(NameError("bad string",
+                          nmea_longitude_to_degrees("11122.333", "W")))
+
+    def test_wrong_string_bad_direction(self):
+        self.assertRaises(NameError("bad string",
+                          nmea_longitude_to_degrees("1122.3333", "N")))
+
+
 if __name__ == '__main__':
     unittest.main()
