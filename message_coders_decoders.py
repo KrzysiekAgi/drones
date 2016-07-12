@@ -30,8 +30,8 @@ def decode_tilt_msg(msg):
 def decode_gprmc_msg(msg):
     rmc_position(1, 1, 1, 1)
 
-def convert_mmea_0183_longitude_to_degrees(nmea):
-    return "23498723498"
+def nmea_longitude_to_degrees(number, direction):
+    return 23498723498
 
-def convert_mmea_0183_latitude_to_degrees(nmea):
-    return "23498723498"
+def nmea_latitude_to_degrees(number, direction):
+    return 23498723498

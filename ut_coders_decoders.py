@@ -3,6 +3,8 @@ from message_coders_decoders import rotate_to_position_msg, move_up_down_msg
 from message_coders_decoders import get_position_msg, sleep_msg
 from message_coders_decoders import enable_device_msg, decode_tilt_msg
 from message_coders_decoders import decode_gprmc_msg, gprmc_position
+from message_coders_decoders import nmea_latitude_to_degrees
+from message_coders_decoders import nmea_longitude_to_degrees
 
 
 class Test_rotate_to_position_msg(unittest.TestCase):
@@ -104,11 +106,42 @@ class Test_decode_position_msg(unittest.TestCase):
 
 
 class Test_decode_gprmc_msg(unittest.TestCase):
-    def simple(self):
+    def test_simple(self):
         msg = "$GPRMC,220516,A,5133.82,N,00042.24,W,173.8,231.8,130694,004.2,W*70\n"
         result = decode_gprmc_msg(msg)
         expected = gprmc_position(5133.82, -00042.24, 00042.24, 004.2)
+        self.assertEqual(result, expected)
+        self.assertFalse(True) #probably there should be custom equality operator for above
 
+
+class Test_decode_nmea_latitude(unittest.TestCase):
+    def test_just_degrees_north(self):
+        result = nmea_latitude_to_degrees("1100.0000", "N")
+        self.assertAlmostEqual(result, 11)
+
+    def test_just_degrees_south(self):
+        result = nmea_latitude_to_degrees("1100.0000", "S")
+        self.assertAlmostEqual(result, -11)
+
+    def test_just_degrees_south_with_minutes(self):
+        result = nmea_latitude_to_degrees("1122.3333", "S")
+        self.assertAlmostEqual(result, -(11 + 22.3333 / 60))
+
+    def test_just_degrees_north_with_minutes(self):
+        result = nmea_latitude_to_degrees("1122.3333", "N")
+        self.assertAlmostEqual(result, (11 + 22.3333 / 60))
+
+    def test_wrong_string_degrees_short(self):
+        self.assertRaises(NameError("bad string",
+                          nmea_latitude_to_degrees("122.3333", "N")))
+
+    def test_wrong_string__minutes_short(self):
+        self.assertRaises(NameError("bad string",
+                          nmea_latitude_to_degrees("1122.333", "N")))
+
+    def test_wrong_string_bad_direction(self):
+        self.assertRaises(NameError("bad string",
+                          nmea_latitude_to_degrees("1122.3333", "sdf")))
 
 
 if __name__ == '__main__':
