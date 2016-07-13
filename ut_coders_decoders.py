@@ -10,56 +10,56 @@ from message_coders_decoders import nmea_longitude_to_degrees
 class Test_rotate_to_position_msg(unittest.TestCase):
     def test_move_to_zero(self):
         message = rotate_to_position_msg("00", 0)
-        self.assertEqual(message, "$O00W+00000\n")
+        self.assertEqual(message, "$O00W0\n")
 
     def test_move_to_plus_position(self):
         message = rotate_to_position_msg("00", 1000)
-        self.assertEqual(message, "$O00W+01000\n")
+        self.assertEqual(message, "$O00W+1000\n")
 
     def test_move_to_minus_position(self):
         message = rotate_to_position_msg("00", -1000)
-        self.assertEqual(message, "$O00W-01000\n")
+        self.assertEqual(message, "$O00W-1000\n")
 
     def test_move_to_max_minus_position(self):
         message = rotate_to_position_msg("00", -32000)
         self.assertEqual(message, "$O00W-32000\n")
 
     def test_move_to_max_plus_position(self):
-        message = rotate_to_position_msg("00", -32000)
+        message = rotate_to_position_msg("00", 32000)
         self.assertEqual(message, "$O00W+32000\n")
 
     def test_move_to_below_min_range(self):
-        self.assertRaises(NameError("position_out_of_range"),
+        self.assertRaises(TypeError,
                           rotate_to_position_msg, "00", -32001)
 
     def test_move_to_above_max_range(self):
-        self.assertRaises(NameError("position_out_of_range"),
+        self.assertRaises(TypeError,
                           rotate_to_position_msg, "00", 32001)
 
     def test_device_address(self):
-        self.assertRaises(NameError("wrong_device_address"),
+        self.assertRaises(TypeError,
                           rotate_to_position_msg, "123", 0)
 
 
 class Test_move_up_down_msg(unittest.TestCase):
     def test_move_up(self):
         message = move_up_down_msg("00", 32000)
-        self.assertEqual(message, "$O00U+00100\n")
+        self.assertEqual(message, "$O00U+32000\n")
 
     def test_move_down(self):
-        message = move_up_down_msg("00", -3200)
-        self.assertEqual(message, "$O00U+00100\n")
+        message = move_up_down_msg("00", -32000)
+        self.assertEqual(message, "$O00D+32000\n")
 
     def test_move_below_min_range(self):
-        self.assertRaises(NameError("position_out_of_range"),
+        self.assertRaises(TypeError,
                           move_up_down_msg, "00", -32001)
 
     def test_move_above_max_range(self):
-        self.assertRaises(NameError("position_out_of_range"),
+        self.assertRaises(TypeError,
                           move_up_down_msg, "00", 32001)
 
     def test_device_address(self):
-        self.assertRaises(NameError("wrong_device_address"),
+        self.assertRaises(TypeError,
                           move_up_down_msg, "aaa", "12")
 
 
@@ -68,7 +68,7 @@ class Test_query_position_msg(unittest.TestCase):
         self.assertEqual(get_position_msg("00"), "$O00R\n")
 
     def test_device_address(self):
-        self.assertRaises(NameError("wrong_device_address"),
+        self.assertRaises(TypeError,
                           get_position_msg, "aaa", "12")
 
 
@@ -77,16 +77,16 @@ class Test_query_sleep_msg(unittest.TestCase):
         self.assertEqual(sleep_msg("00"), "$O00S\n")
 
     def test_device_address(self):
-        self.assertRaises(NameError("wrong_device_address"),
+        self.assertRaises(TypeError,
                           sleep_msg, "aaa")
 
 
 class Test_query_enable_msg(unittest.TestCase):
     def test_msg(self):
-        self.assertEqual(enable_device_msg("00"), "$O00S\n")
+        self.assertEqual(enable_device_msg("00"), "$O00E\n")
 
     def test_device_address(self):
-        self.assertRaises(NameError("wrong_device_address"),
+        self.assertRaises(TypeError,
                           enable_device_msg, "aaa")
 
 
