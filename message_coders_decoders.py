@@ -83,5 +83,10 @@ def nmea_longitude_to_degrees(number, direction):
 
 
 def nmea_latitude_to_degrees(number, direction):
-    
+    r = "[0-9]{4}\.[0-9]{4}"
+    result = re.search(r, number)
+    if result and len(address) == 9:
+        pass
+    else:
+        raise TypeError("wrong_device_address")  
     return 23498723498
