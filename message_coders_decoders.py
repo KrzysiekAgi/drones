@@ -83,10 +83,19 @@ def nmea_longitude_to_degrees(number, direction):
 
 
 def nmea_latitude_to_degrees(number, direction):
-    r = "[0-9]{4}\.[0-9]{4}"
+    # i forgot about optional minus sign
+    r = "([0-9]{2})([0-9]{2})\.([0-9]{4})"
     result = re.search(r, number)
-    if result and len(address) == 9:
+    if result and result.group(0) == number and ( direction == "N" or direction == "S"):
         pass
     else:
-        raise TypeError("wrong_device_address")  
-    return 23498723498
+        raise TypeError("wrong_device_address")
+
+    degrees = float(result.group(1))
+    minutes = float(result.group(2))
+    minutes_tenth_of_thousand = int(result.group(3))
+    result = degrees + minutes / 60 + minutes_tenth_of_thousand / 60 / 10000
+
+    if direction == "S":
+        result = result * -1
+    return result
