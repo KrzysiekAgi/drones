@@ -83,4 +83,5 @@ def nmea_longitude_to_degrees(number, direction):
 
 
 def nmea_latitude_to_degrees(number, direction):
+    
     return 23498723498

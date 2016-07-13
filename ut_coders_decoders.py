@@ -135,16 +135,16 @@ class Test_decode_nmea_latitude(unittest.TestCase):
         self.assertAlmostEqual(result, (11 + 22.3333 / 60))
 
     def test_wrong_string_degrees_short(self):
-        self.assertRaises(NameError("bad string",
-                          nmea_latitude_to_degrees("122.3333", "N")))
+        self.assertRaises(TypeError,
+                          nmea_latitude_to_degrees, "122.3333", "N")
 
     def test_wrong_string__minutes_short(self):
-        self.assertRaises(NameError("bad string",
-                          nmea_latitude_to_degrees("1122.333", "N")))
+        self.assertRaises(TypeError,
+                          nmea_latitude_to_degrees, "1122.333", "N")
 
     def test_wrong_string_bad_direction(self):
-        self.assertRaises(NameError("bad string",
-                          nmea_latitude_to_degrees("1122.3333", "sdf")))
+        self.assertRaises(TypeError,
+                          nmea_latitude_to_degrees, "1122.3333", "sdf")
 
 
 class Test_decode_nmea_longitude(unittest.TestCase):
