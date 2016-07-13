@@ -12,14 +12,26 @@ def azimuth(lat_an, lon_an, lat_dr, lon_dr):
         return azimuth_in_degrees + 360
 
 
-def elevation(lat_an, lon_an, h_an, lat_dr, lon_dr, h_drone):
-    '''source: https://en.wikipedia.org/wiki/Azimuth
-    https://pl.wikipedia.org/wiki/Ortodroma'''
-    some_radians = m.acos(m.sin(m.radians(lat_an)) * m.sin(m.radians(lat_dr)) + m.cos(m.radians(lat_an)) * m.cos(m.radians(lat_dr)) * m.cos(m.radians(lon_dr - lon_an)))
-    arch_len = 111.195 * m.degrees(some_radians)  # in km
-    alfa = (360 * arch_len) / (2 * m.pi * 6378.41)
-    r = 6378.41
-    r_pow = r ** 2
-    leng = m.sqrt(r_pow * 2 - 2 * r_pow * m.cos(alfa))  # in km
-    elev = m.asin(h_drone / leng)
-    return elev
+def elevation(lat_an, lon_an, h_an, lat_dr, lon_dr, h_dr):
+    '''https://en.wikipedia.org/wiki/Great-circle_distance#Computational_formulas
+    korzystam z tego bardziej skomplikowanego wzoru, ale dokadnego dla wszystkich odleglosci'''
+    lat_an_rad = m.radians(lat_an)
+    lat_dr_rad = m.radians(lat_dr)
+    lon_diff_rad = m.radians(lon_dr - lon_an)
+    num_part_1 = (m.cos(lat_dr_rad) * m.sin(lon_diff_rad))**2
+    num_part_21 = m.cos(lat_an_rad) * m.sin(lat_dr_rad)
+    num_part_22 = m.sin(lat_an_rad) * m.cos(lat_dr_rad) * m.cos(lon_diff_rad)
+    num_part_2sq = (num_part_21 - num_part_22)**2
+    numerator = m.sqrt(num_part_1 + num_part_2sq)
+    denom_1 = m.sin(lat_an_rad) * m.sin(lat_dr_rad)
+    denom_2 = m.cos(lat_an_rad) * m.cos(lat_dr_rad) * m.cos(lon_diff_rad)
+    denominator = denom_1 + denom_2
+    D = m.atan2(numerator, denominator) 
+    R_dr = 6378137.0 + h_dr
+    R_an = 6378137.0 + h_an
+    distance_sq = (R_an)**2 + (R_dr)**2 - 2*R_an*R_dr*m.cos(D)
+    distance = m.sqrt(distance_sq)
+    x = distance / m.sin(D)
+    sin_elev = R_dr / x
+    elev = m.degrees(m.asin(sin_elev))
+    return 90 - elev
