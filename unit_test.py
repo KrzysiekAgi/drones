@@ -14,35 +14,35 @@ def are_floats_close(a, b, relative_difference):
 class Test_azimuth(unittest.TestCase):
     def test_simple_north(self):
         a = azimuth(0, 0, 0, 0.1)
-        self.assertAlmostEqual(a, 0)
+        self.assertAlmostEqual(a, 0, 4)
 
     def test_simple_west(self):
         a = azimuth(0, 0, -0.1, 0)
-        self.assertAlmostEqual(a, 270)
+        self.assertAlmostEqual(a, 270, 4)
 
     def test_simple_east(self):
         a = azimuth(0, 0, 0.1, 0)
-        self.assertAlmostEqual(a, 90)
+        self.assertAlmostEqual(a, 90, 4)
 
     def test_simple_south(self):
         a = azimuth(0, 0, 0, -0.1)
-        self.assertAlmostEqual(a, 180)
+        self.assertAlmostEqual(a, 180, 4)
 
     def test_simple_north_west(self):
         a = azimuth(0, 0, -0.1, 0.1)
-        self.assertAlmostEqual(a, 315)
+        self.assertAlmostEqual(a, 315, 4)
 
     def test_simple_south_west(self):
         a = azimuth(0, 0, -0.1, -0.1)
-        self.assertAlmostEqual(a, 225)
+        self.assertAlmostEqual(a, 225, 4)
 
     def test_simple_north_east(self):
         a = azimuth(0, 0, 0.1, 0.1)
-        self.assertAlmostEqual(a, 45)
+        self.assertAlmostEqual(a, 45, 4)
 
     def test_simple_south_east(self):
         a = azimuth(0, 0, 0.1, -0.1)
-        self.assertAlmostEqual(a, 135)
+        self.assertAlmostEqual(a, 135, 4)
 
 
 class Test_elevation_calculation(unittest.TestCase):
