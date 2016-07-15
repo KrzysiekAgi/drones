@@ -1,6 +1,6 @@
 import unittest
 from program import azimuth, elevation, circle_dist
-
+from math import radians
 
 def are_floats_close(a, b, relative_difference):
     if abs(a) > 0.00001 and abs(b) > 0.00001:
@@ -70,35 +70,35 @@ class Test_elevation_calculation(unittest.TestCase):
 class Test_great_circle_distance(unittest.TestCase):
     def test_same_point(self):
         r = circle_dist(0, 0, 0, 0)
-        self.assertEqual(r, 0)
+        self.assertAlmostEqual(r, 0)
 
     def test_other_earth_side_equator(self):
         r = circle_dist(0, 0, 0, 180)
-        self.assertEqual(r, 180)
+        self.assertAlmostEqual(r, radians(180))
 
     def test_other_earth_side_equator_minus(self):
         r = circle_dist(0, 0, 0, -180)
-        self.assertEqual(r, 180)
+        self.assertAlmostEqual(r, radians(180))
 
     def test_other_earth_side_polar(self):
         r = circle_dist(90, 0, -90, 0)
-        self.assertEqual(r, 180)
+        self.assertAlmostEqual(r, radians(180))
 
     def test_other_earth_side_polar_different_longitude(self):
         r = circle_dist(90, 0, -90, 60)
-        self.assertEqual(r, 180)
+        self.assertAlmostEqual(r, radians(180))
 
     def test_one_lat_diff(self):
         r = circle_dist(0, 0, 1, 0)
-        self.assertEqual(r, 1)
+        self.assertAlmostEqual(r, radians(1))
 
     def test_one_lon_diff(self):
         r = circle_dist(0, 0, 0, 1)
-        self.assertEqual(r, 1)
+        self.assertAlmostEqual(r, radians(1))
 
     def test_quater(self):
         r = circle_dist(0, 0, 45, 45)
-        self.assertEqual(r, 31.39971481)
+        self.assertAlmostEqual(r, radians(31.39971481))
 
 
 if __name__ == '__main__':
