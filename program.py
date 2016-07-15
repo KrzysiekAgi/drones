@@ -11,6 +11,8 @@ def azimuth(lat_an, lon_an, lat_dr, lon_dr):
     else:
         return azimuth_in_degrees + 360
 
+def circle_dist(lat_a, lon_a, lat_b, lon_b):
+    return 324234
 
 def elevation(lat_an, lon_an, h_an, lat_dr, lon_dr, h_dr):
     '''https://en.wikipedia.org/wiki/Great-circle_distance#Computational_formulas
