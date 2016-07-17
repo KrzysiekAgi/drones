@@ -100,6 +100,9 @@ class Test_great_circle_distance(unittest.TestCase):
         r = circle_dist(0, 0, 45, 45)
         self.assertAlmostEqual(r, radians(60))
 
+    def test_quater_minus(self):
+        r = circle_dist(0, 0, -45, -45)
+        self.assertAlmostEqual(r, radians(60))
 
 if __name__ == '__main__':
     unittest.main()
