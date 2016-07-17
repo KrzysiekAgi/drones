@@ -98,7 +98,7 @@ class Test_great_circle_distance(unittest.TestCase):
 
     def test_quater(self):
         r = circle_dist(0, 0, 45, 45)
-        self.assertAlmostEqual(r, radians(31.39971481))
+        self.assertAlmostEqual(r, radians(60))
 
 
 if __name__ == '__main__':
