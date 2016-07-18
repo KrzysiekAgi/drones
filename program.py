@@ -37,13 +37,4 @@ def elevation(lat_an, lon_an, h_an, lat_dr, lon_dr, h_dr):
     distance_sq = (R_an) ** 2 + (R_dr) ** 2 - 2 * R_an * R_dr * m.cos(D)
     distance = m.sqrt(distance_sq)
     cos_beta = (R_dr ** 2 - R_an ** 2 - distance_sq)/(2 * R_an * distance)
-    # x = distance / m.sin(D)
-    # sin_elev = R_dr / x
-    # elev = m.degrees(m.asin(sin_elev))
-    # return 90 - elev
-    print "dist: " + str(distance)
-    print "cos: " + str(cos_beta)
-    print m.acos(cos_beta)
-    print m.degrees(m.acos(cos_beta))
-    print "\n"
     return 90 - m.degrees(m.acos(cos_beta)) 
