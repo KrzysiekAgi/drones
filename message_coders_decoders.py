@@ -79,17 +79,31 @@ def decode_gprmc_msg(msg):
 
 
 def nmea_longitude_to_degrees(number, direction):
-    return 23498723498
+    r = "([0-9]{3})([0-9]{2})\.([0-9]{4})"
+    result = re.search(r, number)
+    if result and result.group(0) == number and ( direction == "W" or direction == "E"):
+        pass
+    else:
+        raise TypeError("wrong string")
+
+    degrees = float(result.group(1))
+    minutes = float(result.group(2))
+    minutes_tenth_of_thousand = float(result.group(3))
+    result = degrees + (minutes + minutes_tenth_of_thousand / 10000) / 60 
+
+    if direction == "W":
+        result = result * -1
+
+    return result
 
 
 def nmea_latitude_to_degrees(number, direction):
-    # i forgot about optional minus sign
     r = "([0-9]{2})([0-9]{2})\.([0-9]{4})"
     result = re.search(r, number)
     if result and result.group(0) == number and ( direction == "N" or direction == "S"):
         pass
     else:
-        raise TypeError("wrong_device_address")
+        raise TypeError("wrong string")
 
     degrees = float(result.group(1))
     minutes = float(result.group(2))
