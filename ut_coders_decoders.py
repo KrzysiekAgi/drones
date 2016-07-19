@@ -100,7 +100,7 @@ class Test_decode_position_msg(unittest.TestCase):
         self.assertEqual(result, 2380)
 
     def test_malformed_message(self):
-        self.assertRaises(NameError("malformed_msg"),
+        self.assertRaises(ValueError,
                           decode_tilt_msg,
                           "$O00R+2380a\n")
 

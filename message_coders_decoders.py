@@ -71,7 +71,17 @@ def enable_device_msg(device_address_in_hex):
 
 
 def decode_tilt_msg(msg):
-    return -23432
+    # r = "\$O[0-9, a-f, A-F]{2}[+, -]{1}[0-9]{4}"
+    # result = re.search(r, msg)
+    # print "\n"
+    # print "msg " + msg
+    # print result.group(0)
+    # print "\n"
+    # if result and result.group(0) == msg:
+    #     pass
+    # else:
+    #     raise TypeError("wrong string")
+    return int(msg[5:])
 
 
 def decode_gprmc_msg(msg):
