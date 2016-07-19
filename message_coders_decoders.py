@@ -93,9 +93,10 @@ def nmea_latitude_to_degrees(number, direction):
 
     degrees = float(result.group(1))
     minutes = float(result.group(2))
-    minutes_tenth_of_thousand = int(result.group(3))
-    result = degrees + minutes / 60 + minutes_tenth_of_thousand / 60 / 10000
+    minutes_tenth_of_thousand = float(result.group(3))
+    result = degrees + (minutes + minutes_tenth_of_thousand / 10000) / 60 
 
     if direction == "S":
         result = result * -1
+
     return result
