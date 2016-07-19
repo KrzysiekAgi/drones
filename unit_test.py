@@ -66,6 +66,22 @@ class Test_elevation_calculation(unittest.TestCase):
         result = elevation(0, 0, 0, 45, 0, 2638.954605879 * 1000)
         self.assertAlmostEqual(result, 0, 1) # why so low quality???
 
+    def test_New_South_Wales1(self):
+        result = elevation(-32, 147, 0, -33, 147, 100)
+        self.assertAlmostEqual(result, -0.4483)
+
+    def test_New_South_Wales_close(self):
+        result = elevation(-32, 147, 0, -32.01, 147.01, 50)
+        self.assertAlmostEqual(result, 1.9591)
+
+    def test_New_South_Wales2(self):
+        result = elevation(-32, 147, 0, -32, 148, 100)
+        self.assertAlmostEqual(result, -0.3634)
+
+    def test_New_South_Wales_close2(self):
+        result = elevation(-32, 147, 0, -32.001, 147.001, 50)
+        self.assertAlmostEqual(result, 18.9416)
+
 
 class Test_great_circle_distance(unittest.TestCase):
     def test_same_point(self):
