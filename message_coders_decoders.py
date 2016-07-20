@@ -9,10 +9,10 @@ class gprmc_position():
         self.azimuth_variation = azimuth_variation
 
     def __eq__(self, other):
-        a = self.latitude == other.latitude
-        b = self.longitude == other.longitude
-        c = self.azimuth == other.azimuth
-        d = self.azimuth_variation == other.azimuth_variation
+        a = abs(self.latitude - other.latitude) < 0.01
+        b = abs(self.longitude - other.longitude) < 0.01
+        c = abs(self.azimuth - other.azimuth) < 0.01
+        d = abs(self.azimuth_variation - other.azimuth_variation) < 0.01
         return a and b and c and d
 
 
@@ -95,13 +95,19 @@ def decode_tilt_msg(msg):
 def decode_gprmc_msg(msg):
     # add proper validation
     tokens = msg.split(",")
-    latitude_string = tokesn[3]
+    latitude_string = tokens[3]
     latitude_direction = tokens[4]
     longitude_string = tokens[5]
     longitude_direction = tokens[6]
     azimuth = tokens[8]
     azimuth_var = tokens[10]
-    return gprmc_position(1, 1, 1, 1)
+
+    latitude = nmea_latitude_to_degrees(latitude_string,
+                                        latitude_direction)
+    longitude = nmea_longitude_to_degrees(longitude_string,
+                                          longitude_direction)
+    return gprmc_position(latitude, longitude,
+                          float(azimuth), float(azimuth_var))
 
 
 def nmea_longitude_to_degrees(number, direction):
@@ -124,6 +130,7 @@ def nmea_longitude_to_degrees(number, direction):
 
 
 def nmea_latitude_to_degrees(number, direction):
+
     r = "([0-9]{2})([0-9]{2})\.([0-9]{4})"
     result = re.search(r, number)
     if result and result.group(0) == number and ( direction == "N" or direction == "S"):

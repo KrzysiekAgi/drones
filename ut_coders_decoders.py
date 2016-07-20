@@ -107,11 +107,10 @@ class Test_decode_position_msg(unittest.TestCase):
 
 class Test_decode_gprmc_msg(unittest.TestCase):
     def test_simple(self):
-        msg = "$GPRMC,220516,A,5133.82,N,00042.24,W,173.8,231.8,130694,004.2,W*70\n"
+        msg = "$GPRMC,220516,A,5133.8200,N,00042.2400,W,173.8,231.8,130694,004.2,W*70\n"
         result = decode_gprmc_msg(msg)
-        expected = gprmc_position(5133.82, -00042.24, 00042.24, 004.2)
+        expected = gprmc_position(51.5636, -0.704, 231.8, 004.2)
         self.assertEqual(result, expected)
-        self.assertFalse(True) #probably there should be custom equality operator for above
 
     def test_task(self):
         self.assertFalse(True) #add more test to this class
