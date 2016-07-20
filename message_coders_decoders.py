@@ -93,6 +93,14 @@ def decode_tilt_msg(msg):
 
 
 def decode_gprmc_msg(msg):
+    # add proper validation
+    tokens = msg.split(",")
+    latitude_string = tokesn[3]
+    latitude_direction = tokens[4]
+    longitude_string = tokens[5]
+    longitude_direction = tokens[6]
+    azimuth = tokens[8]
+    azimuth_var = tokens[10]
     return gprmc_position(1, 1, 1, 1)
 
 
