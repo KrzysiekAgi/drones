@@ -8,6 +8,13 @@ class gprmc_position():
         self.azimuth = azimuth
         self.azimuth_variation = azimuth_variation
 
+    def __eq__(self, other):
+        a = self.latitude == other.latitude
+        b = self.longitude == other.longitude
+        c = self.azimuth == other.azimuth
+        d = self.azimuth_variation == other.azimuth_variation
+        return a and b and c and d
+
 
 def raise_if_device_address_is_wrong(address):
     # Type error should not be raised in this case, read and convert
@@ -71,6 +78,7 @@ def enable_device_msg(device_address_in_hex):
 
 
 def decode_tilt_msg(msg):
+    # add validation later
     # r = "\$O[0-9, a-f, A-F]{2}[+, -]{1}[0-9]{4}"
     # result = re.search(r, msg)
     # print "\n"
@@ -85,7 +93,7 @@ def decode_tilt_msg(msg):
 
 
 def decode_gprmc_msg(msg):
-    gprmc_position(1, 1, 1, 1)
+    return gprmc_position(1, 1, 1, 1)
 
 
 def nmea_longitude_to_degrees(number, direction):
