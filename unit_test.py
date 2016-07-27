@@ -1,5 +1,5 @@
 import unittest
-from program import azimuth, elevation, circle_dist
+from geography import azimuth, elevation, circle_dist
 from math import radians
 
 def are_floats_close(a, b, relative_difference):
