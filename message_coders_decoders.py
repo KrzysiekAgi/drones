@@ -2,17 +2,19 @@ import re
 
 
 class gprmc_position():
-    def __init__(self, latitude, longitude, azimuth, azimuth_variation):
+    def __init__(self, latitude, longitude, azimuth, azimuth_variation, gps_status):
         self.latitude = latitude
         self.longitude = longitude
         self.azimuth = azimuth
         self.azimuth_variation = azimuth_variation
+        self.gps_status = gps_status
 
     def __eq__(self, other):
         a = abs(self.latitude - other.latitude) < 0.01
         b = abs(self.longitude - other.longitude) < 0.01
         c = abs(self.azimuth - other.azimuth) < 0.01
         d = abs(self.azimuth_variation - other.azimuth_variation) < 0.01
+        e = self.gps_status == other.gps_status
         return a and b and c and d
 
 
@@ -76,6 +78,9 @@ def enable_device_msg(device_address_in_hex):
     raise_if_device_address_is_wrong(device_address_in_hex)
     return "$O" + device_address_in_hex + "E" + "\n"
 
+def gprmc_position_request(device_address_in_hex):
+    raise_if_device_address_is_wrong(device_address_in_hex)
+    return "$O" + "GPRMC" + "\n"
 
 def decode_tilt_msg(msg):
     # add validation later
@@ -95,6 +100,7 @@ def decode_tilt_msg(msg):
 def decode_gprmc_msg(msg):
     # add proper validation
     tokens = msg.split(",")
+    gps_status = tokens[2]
     latitude_string = tokens[3]
     latitude_direction = tokens[4]
     longitude_string = tokens[5]
@@ -102,12 +108,16 @@ def decode_gprmc_msg(msg):
     azimuth = tokens[8]
     azimuth_var = tokens[10]
 
+    if azimuth_var == '':
+        azimuth_var = "0"
+
     latitude = nmea_latitude_to_degrees(latitude_string,
                                         latitude_direction)
     longitude = nmea_longitude_to_degrees(longitude_string,
                                           longitude_direction)
+
     return gprmc_position(latitude, longitude,
-                          float(azimuth), float(azimuth_var))
+                          float(azimuth), float(azimuth_var), gps_status)
 
 
 def nmea_longitude_to_degrees(number, direction):
@@ -136,6 +146,7 @@ def nmea_latitude_to_degrees(number, direction):
     if result and result.group(0) == number and ( direction == "N" or direction == "S"):
         pass
     else:
+        print direction
         raise TypeError("wrong string")
 
     degrees = float(result.group(1))
