@@ -112,6 +112,12 @@ class Test_decode_gprmc_msg(unittest.TestCase):
         expected = gprmc_position(51.5636, -0.704, 231.8, 004.2, "A")
         self.assertEqual(result, expected)
 
+    def test_simple(self):
+        msg = "$$GPRMC,215656.086,V,,,,,0.00,0.00,010816,,,N*4E:159.7,1,-1\n"
+        result = decode_gprmc_msg(msg)
+        expected = gprmc_position(0, 0, 0, 0, "V")
+        self.assertEqual(result, expected)
+
     def test_task(self):
         self.assertFalse(True) #add more test to this class
 

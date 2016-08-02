@@ -111,10 +111,17 @@ def decode_gprmc_msg(msg):
     if azimuth_var == '':
         azimuth_var = "0"
 
-    latitude = nmea_latitude_to_degrees(latitude_string,
-                                        latitude_direction)
-    longitude = nmea_longitude_to_degrees(longitude_string,
-                                          longitude_direction)
+    if latitude_string == '' or latitude_direction == '':
+        latitude = 0
+    else:
+        latitude = nmea_latitude_to_degrees(latitude_string,
+                                            latitude_direction)
+
+    if longitude_direction == '' or longitude_string == '':
+        longitude = 0
+    else:
+        longitude = nmea_longitude_to_degrees(longitude_string,
+                                              longitude_direction)
 
     return gprmc_position(latitude, longitude,
                           float(azimuth), float(azimuth_var), gps_status)
