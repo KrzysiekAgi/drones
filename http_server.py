@@ -23,21 +23,27 @@ class S(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
+    def display_help(self):
+        with open('help', 'r') as content_file:
+            content = content_file.read()
+            self.wfile.write(contentca)       
+
+    def display_status(self):
+        pos = open_port_and_get_position()
+        resp = {"longitude" : pos.longitude,
+                "latitude": pos.latitude,
+                "azimuth": pos.azimuth,
+                "gps_status": pos.gps_status,
+                "port" : find_device_name_of_serial()}
+        self.wfile.write(json.dumps(resp))
+
     def do_GET(self):
         parsed_path = urlparse.urlparse(self.path)
+        self._set_headers()
         if parsed_path.path == "/stat":
-            self._set_headers()
-            pos = open_port_and_get_position()
-            resp = {"longitude" : pos.longitude,
-                    "latitude": pos.latitude,
-                    "azimuth": pos.azimuth,
-                    "gps_status": pos.gps_status,
-                    "port" : find_device_name_of_serial()}
-            self.wfile.write(json.dumps(resp))
+            display_status()
         else:
-            with open('help', 'r') as content_file:
-                content = content_file.read()
-                self.wfile.write(content)
+            display_help()
 
     def do_HEAD(self):
         self._set_headers()
