@@ -58,7 +58,8 @@ def open_port_and_get_position():
     h = sio.readline()
     print h
     ser.close()
-    return h.strip()
+    resp = decode_gprmc_msg(h.strip())
+    return resp
 
 
 def open_port_and_get_horizontal_position():

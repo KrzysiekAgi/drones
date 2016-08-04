@@ -1,0 +1,12 @@
+Device state:
+http://<raspberry_ip>:8081/stat
+
+Move command: 
+curl -XPOST 'http://<raspberry_ip>:8081/command' -d '{
+    "latitude" : 13.5435,
+    "longitude" : 34.654,
+    "altitude_drone" : 456,
+    "altitude_antenna" : 234
+}
+'
+

@@ -14,6 +14,8 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
 from prog import open_port_and_get_position, find_device_name_of_serial
 import json
+import cgi
+import urlparse
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -22,23 +24,32 @@ class S(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        self._set_headers()
-        pos = open_port_and_get_position()
-        # resp = {"longitude" : pos.longitude,
-        #         "latitude": pos.latitude,
-        #         "azimuth": pos.azimuth,
-        #         "gps_status": pos.gps_status,
-        #         "port" : find_device_name_of_serial()}
-        self.wfile.write(pos)
+        parsed_path = urlparse.urlparse(self.path)
+        if parsed_path.path == "/stat":
+            self._set_headers()
+            pos = open_port_and_get_position()
+            resp = {"longitude" : pos.longitude,
+                    "latitude": pos.latitude,
+                    "azimuth": pos.azimuth,
+                    "gps_status": pos.gps_status,
+                    "port" : find_device_name_of_serial()}
+            self.wfile.write(json.dumps(resp))
+        else:
+            with open('help', 'r') as content_file:
+                content = content_file.read()
+                self.wfile.write(content)
 
     def do_HEAD(self):
         self._set_headers()
-     
+
     def do_POST(self):
         # Doesn't do anything with posted data
+        length = int(self.headers.getheader('content-length'))
+        field_data = self.rfile.read(length)
+        decoded = json.loads(field_data)
         self._set_headers()
-        self.wfile.write("<html><body><h1>POST!</h1></body></html>")
-        
+        self.wfile.write(json.dumps(decoded))
+
 def run(server_class=HTTPServer, handler_class=S, port=8081):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
