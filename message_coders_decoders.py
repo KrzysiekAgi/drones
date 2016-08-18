@@ -52,9 +52,9 @@ def move_up_down_msg(device_address_in_hex, position_in_steps):
     raise_if_number_is_to_long_for_msg(position_in_steps)
     header = "$O" + device_address_in_hex
     if (position_in_steps > 0):
-        result = header + "U" + "+" + str(position_in_steps) + "\n"
+        result = header + "U" + str(position_in_steps) + "\n"
     else:
-        result = header + "D" + "+" + str(-position_in_steps) + "\n"
+        result = header + "D" + str(-position_in_steps) + "\n"
 
     return result
 

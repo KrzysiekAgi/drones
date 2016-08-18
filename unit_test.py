@@ -21,7 +21,7 @@ class Test_azimuth(unittest.TestCase):
         self.assertAlmostEqual(a, 270, 4)
 
     def test_simple_east(self):
-        a = azimuth(0, 0, 0.1, 0)
+        a = azimuth(0, 0, 0.000001, 0)
         self.assertAlmostEqual(a, 90, 4)
 
     def test_simple_south(self):
@@ -37,13 +37,24 @@ class Test_azimuth(unittest.TestCase):
         self.assertAlmostEqual(a, 225, 4)
 
     def test_simple_north_east(self):
-        a = azimuth(0, 0, 0.1, 0.1)
+        a = azimuth(0, 0, 0.00001, 0.00001)
         self.assertAlmostEqual(a, 45, 4)
 
     def test_simple_south_east(self):
         a = azimuth(0, 0, 0.1, -0.1)
         self.assertAlmostEqual(a, 135, 4)
 
+    def test_simple_debug3(self):
+        a = azimuth(0, 0, 0.000001, 0)
+        self.assertAlmostEqual(a, 90, 4)
+
+    def test_simple_debug2(self):
+        a = azimuth(51.0, 17.0, 51.000001, 17.0)
+        self.assertAlmostEqual(a, 135, 4)
+
+    def test_simple_debug(self):
+        a = azimuth(51.1017933333, 17.08882, 51.1018308, 17.0887996)
+        self.assertAlmostEqual(a, 135, 4)
 
 class Test_elevation_calculation(unittest.TestCase):
     def test_above(self):

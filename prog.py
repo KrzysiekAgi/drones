@@ -2,7 +2,7 @@ import serial
 import io
 import subprocess
 from message_coders_decoders import move_up_down_msg, gprmc_position_request
-from message_coders_decoders import decode_gprmc_msg
+from message_coders_decoders import decode_gprmc_msg, get_position_msg
 import time
 import numpy
 import geography
@@ -20,10 +20,24 @@ def find_device_name_of_serial():
 
 def get_serial_object_for_rotor():
     device_name = find_device_name_of_serial()
-    print device_name
     ser = serial.Serial(device_name, 9600, timeout=1)
     return ser
 
+def enable_vertical():
+    ser = get_serial_object_for_rotor()
+    sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
+    msg = unicode(move_up_down_msg("11", steps))
+    sio.write(unicode(msg))
+    sio.flush()
+    ser.close()
+
+def move_vertical(steps):
+    ser = get_serial_object_for_rotor()
+    sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
+    msg = unicode(move_up_down_msg("11", steps))
+    sio.write(unicode(msg))
+    sio.flush()
+    ser.close()
 
 def open_port_send_msg_get_response(msg):
     ser = get_serial_object_for_rotor()
@@ -61,7 +75,6 @@ def open_port_and_get_position():
     sio.write(unicode("$GPRMC\n"))
     sio.flush()
     h = sio.readline()
-    print h
     ser.close()
     resp = decode_gprmc_msg(h.strip())
     return resp
@@ -72,17 +85,35 @@ def open_port_and_get_horizontal_position():
     sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
 
 
+def get_horizontal_position():
+    string = open_port_send_msg_get_response(unicode(get_position_msg("10")))
+    return string[5:]
+
+def move_to_azimuth(expe):
+    ser = get_serial_object_for_rotor()
+    sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
+    expect_steps = degrees_to_steps_for_horizontal(expe)
+    msg = unicode("$O10W" + str(expect_steps)  + "\n")
+    sio.write(unicode(msg))
+    sio.flush()
+    ser.close()
+
+def move_to_expected_azimuth(expected):
+    current = get_horizontal_position()
+    d = float(current)/14300.0 *360
+    t  = where_to_move(expected, d)
+    move_to_azimuth(d + t)
+
+
 def prog():
-    antenna_position = open_port_and_get_position()
-    if antenna_position.gps_status == "A":
-        a = geography.azimuth(antenna_position.latitude,
-                          antenna_position.longitude,
-                          51.1186668,
-                          17.0121249)
-        desired_azimuth = where_to_move(a, antenna_position.azimuth)
-        move_horizontaly(degrees_to_steps_for_horizontal(desired_azimuth))
-    else:
-        print "cannot determine antenna location"
+    # move_to_expected_azimuth(0)
+    prev = []
+    # for i in range(1)
+    while True:
+        o = open_port_and_get_position()
+        if len(prev) > 20:
+            print str(o.longitude) + "\t" + str(o.latitude - prev[-20])
+        prev.append(o.latitude)
 
 
 if __name__ == "__main__":

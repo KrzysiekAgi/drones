@@ -11,14 +11,19 @@ Send a POST request::
     curl -d "foo=bar&bin=baz" http://localhost
 """
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import SocketServer
 from prog import open_port_and_get_position, find_device_name_of_serial
 import json
-import cgi
 import urlparse
 import time
+from geography import azimuth
+from prog import open_port_and_get_position, move_to_expected_azimuth
+from numpy import mean
+
+
 
 class S(BaseHTTPRequestHandler):
+    lon_history = []
+    lat_history = []
     def _set_headers(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
@@ -56,6 +61,15 @@ class S(BaseHTTPRequestHandler):
         log.write(str(structure))
         log.write("\n")
 
+    def validate(self, dictionary):
+        if "lat" in dictionary:
+        # and "latitude" in dictionary
+        # and "drone_altitude" in dictionary:
+            return True
+        else:
+            return False
+
+
 
     def do_POST(self):
         # Doesn't do anything with posted data
@@ -63,12 +77,24 @@ class S(BaseHTTPRequestHandler):
         field_data = self.rfile.read(length)
         self.log(field_data)
         decoded = json.loads(field_data)
+        print decoded
         self._set_headers()
-        self.wfile.write(json.dumps(decoded))
+        if self.validate(decoded):
+            p = open_port_and_get_position()
+            self.lon_history.append(p.longitude)
+            self.lat_history.append(p.latitude)
+            a = azimuth(mean(self.lat_history), mean(self.lon_history) , decoded["lat"], decoded["lng"])
+            move_to_expected_azimuth(a)
+            print a
+            self.wfile.write(str)
+            self.wfile.write(field_data)
+        else:
+            self.wfile.write("not ok")
 
-def run(server_class=HTTPServer, handler_class=S, port=8081):
+def run(server_class=HTTPServer, handler_class=S, port=8083):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
+ 
     print 'Starting httpd...'
     httpd.serve_forever()
 
