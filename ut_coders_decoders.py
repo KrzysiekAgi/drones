@@ -125,6 +125,9 @@ class Test_decode_gprmc_msg(unittest.TestCase):
         expected = gprmc_position(0, 0, 0, 0, "V")
         self.assertEqual(result, expected)
 
+    def test_start_checking_checksum(self):
+        self.assertFalse(True)  # add more test to this class
+
     def test_task(self):
         self.assertFalse(True)  # add more test to this class
 
