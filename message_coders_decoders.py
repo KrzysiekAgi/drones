@@ -2,7 +2,9 @@ import re
 
 
 class gprmc_position():
-    def __init__(self, latitude, longitude, azimuth, azimuth_variation, gps_status):
+    def __init__(self,
+                 latitude, longitude, azimuth,
+                 azimuth_variation, gps_status):
         self.latitude = latitude
         self.longitude = longitude
         self.azimuth = azimuth
@@ -15,7 +17,7 @@ class gprmc_position():
         c = abs(self.azimuth - other.azimuth) < 0.01
         d = abs(self.azimuth_variation - other.azimuth_variation) < 0.01
         e = self.gps_status == other.gps_status
-        return a and b and c and d
+        return a and b and c and d and e
 
 
 def raise_if_device_address_is_wrong(address):
@@ -44,7 +46,8 @@ def rotate_to_position_msg(device_address_in_hex, position_in_steps):
         sign = "+"
     else:
         sign = ""
-    return "$O" + device_address_in_hex + "W" + sign + str(position_in_steps) + "\n"
+    header = "$O" + device_address_in_hex + "W"
+    return header + sign + str(position_in_steps) + "\n"
 
 
 def move_up_down_msg(device_address_in_hex, position_in_steps):
@@ -78,8 +81,10 @@ def enable_device_msg(device_address_in_hex):
     raise_if_device_address_is_wrong(device_address_in_hex)
     return "$O" + device_address_in_hex + "E" + "\n"
 
+
 def gprmc_position_request():
     return "$OGPRMC\n"
+
 
 def decode_tilt_msg(msg):
     # add validation later
@@ -129,7 +134,9 @@ def decode_gprmc_msg(msg):
 def nmea_longitude_to_degrees(number, direction):
     r = "([0-9]{3})([0-9]{2})\.([0-9]{4})"
     result = re.search(r, number)
-    if result and result.group(0) == number and ( direction == "W" or direction == "E"):
+    is_whole_matched = result and result.group(0) == number
+    is_direction_valid = (direction == "W" or direction == "E")
+    if is_whole_matched and is_direction_valid:
         pass
     else:
         raise TypeError("wrong string")
@@ -137,7 +144,7 @@ def nmea_longitude_to_degrees(number, direction):
     degrees = float(result.group(1))
     minutes = float(result.group(2))
     minutes_tenth_of_thousand = float(result.group(3))
-    result = degrees + (minutes + minutes_tenth_of_thousand / 10000) / 60 
+    result = degrees + (minutes + minutes_tenth_of_thousand / 10000) / 60
 
     if direction == "W":
         result = result * -1
@@ -149,7 +156,9 @@ def nmea_latitude_to_degrees(number, direction):
 
     r = "([0-9]{2})([0-9]{2})\.([0-9]{4})"
     result = re.search(r, number)
-    if result and result.group(0) == number and ( direction == "N" or direction == "S"):
+    is_whole_matched = result and result.group(0) == number
+    is_direction_valid = (direction == "N" or direction == "S")
+    if is_whole_matched and is_direction_valid:
         pass
     else:
         print direction
