@@ -78,9 +78,8 @@ def enable_device_msg(device_address_in_hex):
     raise_if_device_address_is_wrong(device_address_in_hex)
     return "$O" + device_address_in_hex + "E" + "\n"
 
-def gprmc_position_request(device_address_in_hex):
-    raise_if_device_address_is_wrong(device_address_in_hex)
-    return "$O" + "GPRMC" + "\n"
+def gprmc_position_request():
+    return "$OGPRMC\n"
 
 def decode_tilt_msg(msg):
     # add validation later

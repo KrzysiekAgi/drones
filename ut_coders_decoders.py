@@ -5,6 +5,13 @@ from message_coders_decoders import enable_device_msg, decode_tilt_msg
 from message_coders_decoders import decode_gprmc_msg, gprmc_position
 from message_coders_decoders import nmea_latitude_to_degrees
 from message_coders_decoders import nmea_longitude_to_degrees
+from message_coders_decoders import gprmc_position_request
+
+
+class Test_gprmc_position_request(unittest.TestCase):
+    def test_basic(self):
+        message = gprmc_position_request()
+        self.assertEqual(message, "$OGPRMC\n")
 
 
 class Test_rotate_to_position_msg(unittest.TestCase):
@@ -44,11 +51,11 @@ class Test_rotate_to_position_msg(unittest.TestCase):
 class Test_move_up_down_msg(unittest.TestCase):
     def test_move_up(self):
         message = move_up_down_msg("00", 32000)
-        self.assertEqual(message, "$O00U+32000\n")
+        self.assertEqual(message, "$O00U32000\n")
 
     def test_move_down(self):
         message = move_up_down_msg("00", -32000)
-        self.assertEqual(message, "$O00D+32000\n")
+        self.assertEqual(message, "$O00D32000\n")
 
     def test_move_below_min_range(self):
         self.assertRaises(TypeError,
