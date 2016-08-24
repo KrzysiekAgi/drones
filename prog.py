@@ -4,8 +4,6 @@ import subprocess
 from message_coders_decoders import move_up_down_msg, gprmc_position_request
 from message_coders_decoders import decode_gprmc_msg, get_position_msg
 import time
-import numpy
-import geography
 from intelligence import where_to_move
 
 
@@ -50,7 +48,7 @@ def open_port_send_msg_get_response(msg):
 
 
 def send_and_receive_gprmc(sio):
-    sio.write(unicode("$GPRMC\n"))
+    sio.write(unicode(gprmc_position_request()))
     sio.flush()
     time.sleep(0.5)
     h = sio.readline()
