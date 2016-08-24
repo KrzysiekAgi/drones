@@ -57,6 +57,38 @@ class Test_azimuth(unittest.TestCase):
         a = azimuth(51.0, 17.00000, 51.00000,  16.99999)
         self.assertAlmostEqual(a, 270, 4)
 
+    def test_New_South_Wales_north(self):
+        a = azimuth(-32.0, 147.0, -31.9, 147.0)
+        self.assertAlmostEqual(a, 0, 4)
+
+    def test_New_South_Wales_south(self):
+        a = azimuth(-32.0, 147.0, -32.1, 147.0)
+        self.assertAlmostEqual(a, 180, 4)
+
+    def test_New_South_Wales_east(self):
+        a = azimuth(-32.0, 147.0, -32.0, 147.1)
+        self.assertAlmostEqual(a, 90, 4)
+
+    def test_New_South_Wales_west(self):
+        a = azimuth(-32.0, 147.0, -32.0, 146.9)
+        self.assertAlmostEqual(a, 270, 4)
+
+    def test_New_South_Wales_north_east(self):
+        a = azimuth(-32.0, 147.0, -31.9, 147.1)
+        self.assertAlmostEqual(a, 45, 4)
+
+    def test_New_South_Wales_north_west(self):
+        a = azimuth(-32.0, 147.0, -31.9, 146.9)
+        self.assertAlmostEqual(a, 315, 4)
+
+    def test_New_South_Wales_south_east(self):
+        a = azimuth(-32.0, 147.0, -32.1, 147.1)
+        self.assertAlmostEqual(a, 135, 4)
+
+    def test_New_South_Wales_south_west(self):
+        a = azimuth(-32.0, 147.0, -32.1, 146.9)
+        self.assertAlmostEqual(a, 225, 4)
+
 class Test_elevation_calculation(unittest.TestCase):
     def test_above(self):
         result = elevation(0, 0, 0, 0, 0, 100)
