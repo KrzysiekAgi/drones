@@ -3,16 +3,18 @@ import math as m
 
 def azimuth(lat_an, lon_an, lat_dr, lon_dr):
     L =  lon_dr - lon_an
+    L = -L
     numerator = m.sin(m.radians(L))
     f = m.cos(m.radians(lat_an)) * m.tan(m.radians(lat_dr))
     s = m.sin(m.radians(lat_an)) * m.cos(m.radians(L))
     denominator = f - s
     azimuth_in_radians = m.atan2(denominator, numerator)
     azimuth_in_degrees = m.degrees(azimuth_in_radians)
-    if azimuth_in_degrees >= 0:
-        return azimuth_in_degrees
+    rotated = azimuth_in_degrees - 90
+    if rotated >= 0:
+        return rotated
     else:
-        return azimuth_in_degrees + 360
+        return rotated + 360
 
 
 def circle_dist(lat_a, lon_a, lat_b, lon_b):
