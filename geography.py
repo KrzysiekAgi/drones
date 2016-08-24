@@ -2,25 +2,17 @@ import math as m
 
 
 def azimuth(lat_an, lon_an, lat_dr, lon_dr):
-    b = m.acos(m.cos(m.radians(90 - lat_dr)) * m.cos(m.radians(90 - lat_an) + m.sin(m.radians(90 - lat_dr)) * m.sin(m.radians(90 - lat_an))*m.cos(m.radians(lon_dr - lon_an))))
-    g = m.asin(m.sin(m.radians(90 - lat_dr)) * m.sin(m.radians(lon_dr - lon_an)) /  m.sin(b))
-    # return m.degrees(g)
-    lat_diff = lat_an - lat_dr
-    lon_dif = lon_an - lon_dr
-    print -lat_diff
-    a = m.atan2(-lat_diff, -lon_dif)
-    if (m.degrees(a) < 0):
-        return 360 + m.degrees(a)
+    L =  lon_dr - lon_an
+    numerator = m.sin(m.radians(L))
+    f = m.cos(m.radians(lat_an)) * m.tan(m.radians(lat_dr))
+    s = m.sin(m.radians(lat_an)) * m.cos(m.radians(L))
+    denominator = f - s
+    azimuth_in_radians = m.atan2(denominator, numerator)
+    azimuth_in_degrees = m.degrees(azimuth_in_radians)
+    if azimuth_in_degrees >= 0:
+        return azimuth_in_degrees
     else:
-        return m.degrees(a)
-    # numerator = m.sin(m.radians(lon_dr))
-    # denominator = m.cos(m.radians(lat_an)) * m.tan(m.radians(lat_dr)) - m.sin(m.radians(lat_an)) * m.cos(m.radians(lon_dr))
-    # azimuth_in_radians = m.atan2(denominator, numerator)
-    # azimuth_in_degrees = m.degrees(azimuth_in_radians)
-    # if azimuth_in_degrees >= 0:
-    #     return azimuth_in_degrees
-    # else:
-    #     return azimuth_in_degrees + 360
+        return azimuth_in_degrees + 360
 
 
 def circle_dist(lat_a, lon_a, lat_b, lon_b):
