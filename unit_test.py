@@ -67,27 +67,27 @@ class Test_azimuth(unittest.TestCase):
 
     def test_New_South_Wales_east(self):
         a = azimuth(-32.0, 147.0, -32.0, 147.1)
-        self.assertAlmostEqual(a, 90, 4)
+        self.assertAlmostEqual(a, 90.0265, 4)
 
     def test_New_South_Wales_west(self):
         a = azimuth(-32.0, 147.0, -32.0, 146.9)
-        self.assertAlmostEqual(a, 270, 4)
+        self.assertAlmostEqual(a, 269.9735, 4)
 
     def test_New_South_Wales_north_east(self):
         a = azimuth(-32.0, 147.0, -31.9, 147.1)
-        self.assertAlmostEqual(a, 45, 4)
+        self.assertAlmostEqual(a, 40.3414, 4)
 
     def test_New_South_Wales_north_west(self):
         a = azimuth(-32.0, 147.0, -31.9, 146.9)
-        self.assertAlmostEqual(a, 315, 4)
+        self.assertAlmostEqual(a, 319.6586, 4)
 
     def test_New_South_Wales_south_east(self):
         a = azimuth(-32.0, 147.0, -32.1, 147.1)
-        self.assertAlmostEqual(a, 135, 4)
+        self.assertAlmostEqual(a, 139.7424, 4)
 
     def test_New_South_Wales_south_west(self):
         a = azimuth(-32.0, 147.0, -32.1, 146.9)
-        self.assertAlmostEqual(a, 225, 4)
+        self.assertAlmostEqual(a, 220.2576, 4)
 
 class Test_elevation_calculation(unittest.TestCase):
     def test_above(self):
