@@ -19,11 +19,11 @@ from geography import azimuth
 from prog import open_port_and_get_position, move_to_expected_azimuth
 from numpy import mean
 
+last_request_time = time.time()
 
 
 class S(BaseHTTPRequestHandler):
-    lon_history = []
-    lat_history = []
+
     def _set_headers(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
@@ -44,12 +44,17 @@ class S(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(resp))
 
     def do_GET(self):
+        global last_request_time
         parsed_path = urlparse.urlparse(self.path)
-        # self._set_headers()
         if parsed_path.path == "/stat":
             self.display_status()
         else:
             self.display_help()
+
+        current_time = time.time()
+        diff = current_time - last_request_time
+        last_request_time = current_time
+        self.wfile.write(diff)
 
     def do_HEAD(self):
         self._set_headers()
@@ -62,17 +67,12 @@ class S(BaseHTTPRequestHandler):
         log.write("\n")
 
     def validate(self, dictionary):
-        if "lat" in dictionary:
-        # and "latitude" in dictionary
-        # and "drone_altitude" in dictionary:
+        if "lat" in dictionary and "lng" in dictionary:
             return True
         else:
             return False
 
-
-
     def do_POST(self):
-        # Doesn't do anything with posted data
         length = int(self.headers.getheader('content-length'))
         field_data = self.rfile.read(length)
         self.log(field_data)
@@ -91,7 +91,7 @@ class S(BaseHTTPRequestHandler):
         else:
             self.wfile.write("not ok")
 
-def run(server_class=HTTPServer, handler_class=S, port=8083):
+def run(server_class=HTTPServer, handler_class=S, port=8086):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
  
