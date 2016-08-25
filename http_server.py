@@ -81,8 +81,6 @@ class S(BaseHTTPRequestHandler):
         self._set_headers()
         if self.validate(decoded):
             p = open_port_and_get_position()
-            self.lon_history.append(p.longitude)
-            self.lat_history.append(p.latitude)
             a = azimuth(mean(self.lat_history), mean(self.lon_history) , decoded["lat"], decoded["lng"])
             move_to_expected_azimuth(a)
             print a
