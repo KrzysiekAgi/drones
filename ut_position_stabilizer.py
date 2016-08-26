@@ -30,7 +30,7 @@ class Test_stabilizer(unittest.TestCase):
         p = position_stabilizer.position_stabilizer(10, 10)
 
         for r in range(1,15):
-            p.add_measurment(p, p)
+            p.add_measurment(r, r)
 
         self.assertFalse(p.is_ready())
 
