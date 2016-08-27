@@ -11,13 +11,13 @@ Send a POST request::
     curl -d "foo=bar&bin=baz" http://localhost
 """
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from prog import open_port_and_get_position, find_device_name_of_serial
+from rotor_utils import open_port_and_get_position, find_device_name_of_serial
 import json
 import urlparse
 import time
 from geography import azimuth
-from prog import open_port_and_get_position, move_to_expected_azimuth
 from numpy import mean
+
 
 last_request_time = time.time()
 
