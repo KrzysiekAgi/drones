@@ -22,6 +22,27 @@ from numpy import mean
 last_request_time = time.time()
 
 
+def create_status_page():
+    pos = open_port_and_get_position()
+    resp = {"longitude": pos.longitude,
+            "latitude": pos.latitude,
+            "azimuth": pos.azimuth,
+            "gps_status": pos.gps_status,
+            "port": find_device_name_of_serial()}
+    return resp
+
+
+def create_help_page():
+    content = ""
+    with open('help', 'r') as content_file:
+        content = content_file.read()
+
+    if content == "":
+        content = "unexpected error occured"
+    return content
+
+
+
 class S(BaseHTTPRequestHandler):
 
     def _set_headers(self):
@@ -30,17 +51,10 @@ class S(BaseHTTPRequestHandler):
         self.end_headers()
 
     def display_help(self):
-        with open('help', 'r') as content_file:
-            content = content_file.read()
-            self.wfile.write(content)      
+        self.wfile.write(create_help_page())      
 
     def display_status(self):
-        pos = open_port_and_get_position()
-        resp = {"longitude": pos.longitude,
-                "latitude": pos.latitude,
-                "azimuth": pos.azimuth,
-                "gps_status": pos.gps_status,
-                "port": find_device_name_of_serial()}
+        resp = create_status_page()
         self.wfile.write(json.dumps(resp))
 
     def do_GET(self):
