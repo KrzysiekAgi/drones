@@ -61,8 +61,8 @@ class position_stabilizer():
         if not enough_measurments:
             return False
 
-        self.measur_list = remove_big_errors(self.measur_list)
-        p_and_e = clac_error_and_pos(self.measur_list)
+        tmp_measur_list = remove_big_errors(self.measur_list)
+        p_and_e = clac_error_and_pos(tmp_measur_list)
 
         is_accurate = self.accuracy > p_and_e["err"]
         if is_accurate:
