@@ -19,7 +19,6 @@ def clac_error_and_pos(measur_list):
 def remove_big_errors(measur_list):
     result = []
     p_and_e = clac_error_and_pos(measur_list)
-    print p_and_e["err"]
     for m in measur_list:
         lat_1 = p_and_e["lat"]
         lon_1 = p_and_e["lon"]
@@ -27,7 +26,6 @@ def remove_big_errors(measur_list):
         lon_2 = m["lon"]
         c_dist = geography.circle_dist(lat_1, lon_1, lat_2, lon_2)
         m_dist = c_dist * 6371 * 1000
-        print str(m_dist) + "\t" + str(p_and_e["err"])
         err = max(p_and_e["err"], 0.1)
         if m_dist <= err:
             result.append(m)
