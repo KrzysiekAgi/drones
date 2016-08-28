@@ -18,10 +18,6 @@ import time
 from geography import azimuth
 from numpy import mean
 
-
-last_request_time = time.time()
-page = """<html><head><title>Title goes here.</title></head><body><p>This is a test.</p><p>You accessed path: /map.html</p></body></html>"""
-
 def create_status_page():
     pos = open_port_and_get_position()
     resp = {"longitude": pos.longitude,
@@ -40,17 +36,6 @@ def create_help_page():
     if content == "":
         content = "unexpected error occured"
     return content
-
-def create_map_page():
-    content = ""
-    with open('map.html', 'r') as content_file:
-        content = content_file.read()
-
-    if content == "":
-        content = "unexpected error occured"
-    return content
-
-
 
 
 class S(BaseHTTPRequestHandler):
