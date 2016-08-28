@@ -41,13 +41,40 @@ def create_help_page():
         content = "unexpected error occured"
     return content
 
+def create_map_page():
+    content = ""
+    with open('map.html', 'r') as content_file:
+        content = content_file.read()
+
+    if content == "":
+        content = "unexpected error occured"
+    return content
+
+
 
 
 class S(BaseHTTPRequestHandler):
 
+    def create_map_page():
+        content = ""
+        with open('map.html', 'r') as content_file:
+            for l in content_file.readlines():
+                self.wfile.write(l)
+
+    def create_ble_page(self):
+        self.send_response(200)
+        # self.send_header("Content-type", "text/html")
+        self.end_headers()
+        self.wfile.write("<html><head><title>Title goes here.</title></head>")
+        self.wfile.write("<body><p>This is a test.</p>")
+        # If someone went to "http://something.somewhere.net/foo/bar/",
+        # then s.path equals "/foo/bar/".
+        self.wfile.write("<p>You accessed path: %s</p>" % self.path)
+        self.wfile.write("</body></html>")
+
     def _set_headers(self):
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-type', 'html')
         self.end_headers()
 
     def display_help(self):
@@ -58,17 +85,15 @@ class S(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(resp))
 
     def do_GET(self):
-        global last_request_time
         parsed_path = urlparse.urlparse(self.path)
+        # self._set_headers
         if parsed_path.path == "/stat":
             self.display_status()
+        elif parsed_path.path == "/map.html":
+            self.create_ble_page()
+            # self.wfile.write(create_map_page())
         else:
             self.display_help()
-
-        current_time = time.time()
-        diff = current_time - last_request_time
-        last_request_time = current_time
-        self.wfile.write(diff)
 
     def do_HEAD(self):
         self._set_headers()
