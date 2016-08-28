@@ -20,7 +20,7 @@ from numpy import mean
 
 
 last_request_time = time.time()
-
+page = """<html><head><title>Title goes here.</title></head><body><p>This is a test.</p><p>You accessed path: /map.html</p></body></html>"""
 
 def create_status_page():
     pos = open_port_and_get_position()
@@ -55,7 +55,10 @@ def create_map_page():
 
 class S(BaseHTTPRequestHandler):
 
-    def create_map_page():
+    def create_map_page(self):
+        self.send_response(200)
+        self.send_header("Content-type", "html")
+        self.end_headers()
         content = ""
         with open('map.html', 'r') as content_file:
             for l in content_file.readlines():
@@ -67,14 +70,12 @@ class S(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write("<html><head><title>Title goes here.</title></head>")
         self.wfile.write("<body><p>This is a test.</p>")
-        # If someone went to "http://something.somewhere.net/foo/bar/",
-        # then s.path equals "/foo/bar/".
         self.wfile.write("<p>You accessed path: %s</p>" % self.path)
         self.wfile.write("</body></html>")
 
     def _set_headers(self):
         self.send_response(200)
-        self.send_header('Content-type', 'html')
+        self.send_header('Content-type', 'text/html')
         self.end_headers()
 
     def display_help(self):
@@ -90,8 +91,10 @@ class S(BaseHTTPRequestHandler):
         if parsed_path.path == "/stat":
             self.display_status()
         elif parsed_path.path == "/map.html":
-            self.create_ble_page()
-            # self.wfile.write(create_map_page())
+            global page
+            # self.wfile.write(page)
+            # self.create_ble_page()
+            self.wfile.write(self.create_map_page())
         else:
             self.display_help()
 
