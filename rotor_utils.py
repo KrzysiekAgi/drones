@@ -2,7 +2,7 @@ import subprocess
 import serial
 import io
 from message_coders_decoders import decode_gprmc_msg, get_position_msg
-from math_utils.intelligence import where_to_move
+from math_utils.intelligence import where_to_move_absolute
 
 
 def find_device_name_of_serial():
@@ -34,7 +34,7 @@ def open_port_and_get_position():
 def move_to_expected_azimuth(expected):
     current = get_horizontal_position()
     d = float(current) / 14300.0 * 360
-    t = where_to_move(expected, d)
+    t = where_to_move_absolute(expected, d)
     move_to_azimuth(d + t)
 
 
