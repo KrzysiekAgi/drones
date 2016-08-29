@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>HTTP Map</title>
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=yes">
+		<meta charset="utf-8">
+		<style>
+			html, body {
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+			
+			#map {
+				height: 100%;
+			}
+			
+			#floating-panel {
+				position: absolute;
+				top: 10px;
+				left: 25%;
+				z-index: 5;
+				background-color: #fff;
+				padding: 5px;
+				border: 1px solid #999;
+				text-align: left;
+				font-family: 'Roboto','sans-serif';
+				line-height: 30px;
+				padding-left: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="map"></div>
+		<div id="floating-panel">
+			<table style="width:100%">
+				<tr>
+					<td>Antenna:</td>
+					<td>Dron:</td> 
+					<td>Current heading:</td>
+					<td>Right heading:</td> 
+				</tr>
+				<tr>
+					<td><input type="text" readonly id="antenna">, </td>
+					<td><input type="text" readonly id="dron">, </td>
+					<td><input type="text" readonly id="current_heading"> degrees, </td>
+					<td><input type="text" readonly id="right_heading"> degrees</td>
+				</tr>
+			</table>
+		</div>
+		<script>
+			var mapCenter = new google.maps.LatLng(51.1048895,17.0343508);
+			var antGPS = new google.maps.LatLng(51.1048895,17.0323508);
+			var dronGPS = new google.maps.LatLng(51.1048895,17.0367550);
+			var current_heading = 0.0000000;
+			
+			var antMarker, dronMarker;
+			var polyAntDron, polyArrow;
+			
+			function update_drone_antenna_position() {
+				var req = new XMLHttpRequest();
+				req.open('GET', 'test', false);
+				req.send(null);
+				if(req.status != 200)
+  					alert("unexpected error");
+  				pos = JSON.parse(req.responseText);
+  				var latlng = new google.maps.LatLng(-24.397, 140.644);
+  				antMarker.setPosition(latlng);
+  				dronMarker.setPosition({lat: 1, lng: 1});
+  				update();		
+			}
+
+			function initMap() {
+				var req = new XMLHttpRequest();
+				req.open('GET', 'test', false);
+				req.send(null);
+				if(req.status != 200)
+  					alert("unexpected error");
+  				// alert(req.responseText)
+  				pos = JSON.parse(req.responseText);
+
+				var map = new google.maps.Map(document.getElementById("map"), {
+					zoom: 10,
+					center: {lat: pos.lat, lng: pos.lon},
+				});
+				
+				map.controls[google.maps.ControlPosition.TOP_CENTER].push(document.getElementById('info'));
+
+				antMarker = new google.maps.Marker({
+					map: map,
+					icon: {
+						path: google.maps.SymbolPath.CIRCLE,
+						scale: 12
+					},
+					draggable: true,
+					position: {lat: pos.lat, lng: pos.lon}
+				});
+				
+				dronMarker = new google.maps.Marker({
+					map: map,
+					icon: {
+						path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+						scale: 5
+					},
+					animation: google.maps.Animation.BOUNCE,
+					draggable: true,
+					position: {lat: pos.lat, lng: pos.lon}
+				});
+				
+				var bounds = new google.maps.LatLngBounds(antMarker.getPosition(), dronMarker.getPosition());
+				map.fitBounds(bounds);
+				
+				google.maps.event.addListener(antMarker, 'position_changed', update);
+				google.maps.event.addListener(dronMarker, 'position_changed', update);
+				
+				polyAntDron = new google.maps.Polyline({
+					path: [antMarker.getPosition(),dronMarker.getPosition()],
+					strokeColor:"#0000FF",
+					strokeOpacity:1.0,
+					strokeWeight:2,
+					map: map,
+				});
+				
+				var arrowSymbol = {
+					path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+				};
+				
+				polyArrow = new google.maps.Polyline({
+					path: [antMarker.getPosition(), dronMarker.getPosition()],
+					icons: [{
+						icon: arrowSymbol,
+						offset: '100%'
+					}],
+					map: map,
+				});
+				var timer = setInterval(update_drone_antenna_position, 2000)
+				update();
+			}
+			
+			function update() {
+				var path = [antMarker.getPosition(), dronMarker.getPosition()];
+				var directionPosition = google.maps.geometry.spherical.computeOffset(antMarker.getPosition(), 100, current_heading);
+				var arrowPath = [antMarker.getPosition(), directionPosition];
+				polyAntDron.setPath(path);
+				polyArrow.setPath(arrowPath);
+				var right_heading = google.maps.geometry.spherical.computeHeading(path[0], path[1]);
+				document.getElementById('right_heading').value = right_heading;
+				document.getElementById('current_heading').value = current_heading;
+				document.getElementById('antenna').value = path[0].toString();
+				document.getElementById('dron').value = path[1].toString();
+			}
+		</script>
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiw0UQyjsJXYxVNB2Lw7KdzlI8tk3u1KI&libraries=geometry&callback=initMap"
+		async defer></script>
+	</body>
+</html>
