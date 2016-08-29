@@ -18,13 +18,30 @@ import time
 from geography import azimuth
 from numpy import mean
 
+drone_position = {"lat": 0.1, "lon": 0.5}
+antenna_position = {"lat": 0.1, "lon": 0.5, "azimuth": 10}
+port_address = "some_strange_name"
+antenna_status = "notok"
+
+
 def create_status_page():
-    pos = open_port_and_get_position()
-    resp = {"longitude": pos.longitude,
-            "latitude": pos.latitude,
-            "azimuth": pos.azimuth,
-            "gps_status": pos.gps_status,
-            "port": find_device_name_of_serial()}
+    # pos = open_port_and_get_position()
+    global drone_position
+    global antenna_position
+    global port_address
+    global antenna_status
+    resp = {
+            "ant": {
+             "longitude": antenna_position["lon"],
+             "latitude": antenna_position["lat"],
+                "azimuth": antenna_position["azimuth"],
+            },
+            "drone": {
+             "longitude": drone_position["lon"],
+             "latitude": drone_position["lat"]
+            },
+            "gps_status": antenna_status,
+            "port": port_address}
     return resp
 
 
@@ -53,18 +70,6 @@ class S(BaseHTTPRequestHandler):
         self.send_header("Content-type", "html")
         self.end_headers()
         self.wfile.write(create_map_page())
-        # with open('map.html', 'r') as content_file:
-        #     content = content_file.read()
-        #     self.wfile.write(content)
-
-    def create_ble_page(self):
-        self.send_response(200)
-        # self.send_header("Content-type", "text/html")
-        self.end_headers()
-        self.wfile.write("<html><head><title>Title goes here.</title></head>")
-        self.wfile.write("<body><p>This is a test.</p>")
-        self.wfile.write("<p>You accessed path: %s</p>" % self.path)
-        self.wfile.write("</body></html>")
 
     def _set_headers(self):
         self.send_response(200)
@@ -72,7 +77,7 @@ class S(BaseHTTPRequestHandler):
         self.end_headers()
 
     def display_help(self):
-        self.wfile.write(create_help_page())      
+        self.wfile.write(create_help_page())   
 
     def display_status(self):
         resp = create_status_page()
