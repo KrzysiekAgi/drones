@@ -35,7 +35,7 @@ def move_to_expected_azimuth(expected):
     current = get_horizontal_position()
     d = float(current) / 14300.0 * 360
     t = where_to_move_absolute(expected, d)
-    move_to_azimuth(d + t)
+    move_to_azimuth(t)
 
 
 def get_horizontal_position():

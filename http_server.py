@@ -133,10 +133,13 @@ def initiate():
     global port_address
     port_address = find_device_name_of_serial()
     p = position_stabilizer(1, 20)
-    while not position_stabilizer.is_ready():
-        pos = open_port_and_get_position
+    while not p.is_ready():
+        pos = open_port_and_get_position()
         if pos.gps_status == "A":
-            p.add_measurment(pos["latitude"], pos["longitude"])
+            print "position ok"
+            p.add_measurment(pos.latitude, pos.longitude)
+        else:
+            print "position notok"
         time.sleep(2)
     ant_pos = p.get_position()
     global antenna_position
@@ -147,7 +150,7 @@ def initiate():
 def run(server_class=HTTPServer, handler_class=S, port=8086):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
-
+    initiate()
     print 'Starting httpd...'
     httpd.serve_forever()
 

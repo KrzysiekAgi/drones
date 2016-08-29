@@ -63,6 +63,7 @@ class position_stabilizer():
         p_and_e = clac_error_and_pos(tmp_measur_list)
 
         is_accurate = self.accuracy > p_and_e["err"]
+        print p_and_e["err"]
         if is_accurate:
             return True
         else:
