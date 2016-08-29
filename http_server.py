@@ -18,12 +18,13 @@ import time
 from geography import azimuth
 from numpy import mean
 from math_utils.position_stabilizer import position_stabilizer
+from frequency_lock import frequency_lock
 
 drone_position = {"lat": 51.1048895, "lon": 17.0353508}
 antenna_position = {"lat": 51.1048895, "lon": 17.0343508, "azimuth": 10}
 port_address = "some_strange_name"
 antenna_status = "notok"
-
+f_lock = frequency_lock(1)
 
 def create_status_page():
     # pos = open_port_and_get_position()
@@ -117,7 +118,8 @@ class S(BaseHTTPRequestHandler):
         decoded = json.loads(field_data)
         print decoded
         self._set_headers()
-        if self.validate(decoded):
+        global f_lock
+        if self.validate(decoded) and f_lock.can_act():
             drone_position["lat"] = decoded["lat"]
             drone_position["lon"] = decoded["lng"]
             a = azimuth(antenna_position["lat"], antenna_position["lon"], decoded["lat"], decoded["lng"])
