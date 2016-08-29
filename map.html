@@ -59,29 +59,30 @@
 			
 			function update_drone_antenna_position() {
 				var req = new XMLHttpRequest();
-				req.open('GET', 'test', false);
+				req.open('GET', 'stat', false);
 				req.send(null);
 				if(req.status != 200)
   					alert("unexpected error");
   				pos = JSON.parse(req.responseText);
-  				var latlng = new google.maps.LatLng(-24.397, 140.644);
-  				antMarker.setPosition(latlng);
-  				dronMarker.setPosition({lat: 1, lng: 1});
+  				var latlng_ant = new google.maps.LatLng(pos.ant.lat, pos.ant.lon);
+  				var latlng_drn = new google.maps.LatLng(pos.drone.lat, pos.drone.lon);
+  				antMarker.setPosition(latlng_ant);
+  				dronMarker.setPosition(latlng_drn);
   				update();		
 			}
 
 			function initMap() {
 				var req = new XMLHttpRequest();
-				req.open('GET', 'test', false);
+				req.open('GET', 'stat', false);
 				req.send(null);
 				if(req.status != 200)
   					alert("unexpected error");
-  				// alert(req.responseText)
+  				alert(req.responseText)
   				pos = JSON.parse(req.responseText);
 
 				var map = new google.maps.Map(document.getElementById("map"), {
 					zoom: 10,
-					center: {lat: pos.lat, lng: pos.lon},
+					center: {lat: pos.ant.lat, lng: pos.ant.lon},
 				});
 				
 				map.controls[google.maps.ControlPosition.TOP_CENTER].push(document.getElementById('info'));
@@ -93,7 +94,7 @@
 						scale: 12
 					},
 					draggable: true,
-					position: {lat: pos.lat, lng: pos.lon}
+					position: {lat: pos.ant.lat, lng: pos.ant.lon}
 				});
 				
 				dronMarker = new google.maps.Marker({
@@ -104,7 +105,7 @@
 					},
 					animation: google.maps.Animation.BOUNCE,
 					draggable: true,
-					position: {lat: pos.lat, lng: pos.lon}
+					position: {lat: pos.drone.lat, lng: pos.drone.lon}
 				});
 				
 				var bounds = new google.maps.LatLngBounds(antMarker.getPosition(), dronMarker.getPosition());

@@ -11,15 +11,16 @@ Send a POST request::
     curl -d "foo=bar&bin=baz" http://localhost
 """
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from rotor_utils import open_port_and_get_position, find_device_name_of_serial
+from rotor_utils import open_port_and_get_position, find_device_name_of_serial, move_to_expected_azimuth
 import json
 import urlparse
 import time
 from geography import azimuth
 from numpy import mean
+from math_utils.position_stabilizer import position_stabilizer
 
-drone_position = {"lat": 0.1, "lon": 0.5}
-antenna_position = {"lat": 0.1, "lon": 0.5, "azimuth": 10}
+drone_position = {"lat": 51.1048895, "lon": 17.0353508}
+antenna_position = {"lat": 51.1048895, "lon": 17.0343508, "azimuth": 10}
 port_address = "some_strange_name"
 antenna_status = "notok"
 
@@ -32,13 +33,13 @@ def create_status_page():
     global antenna_status
     resp = {
             "ant": {
-             "longitude": antenna_position["lon"],
-             "latitude": antenna_position["lat"],
+             "lon": antenna_position["lon"],
+             "lat": antenna_position["lat"],
                 "azimuth": antenna_position["azimuth"],
             },
             "drone": {
-             "longitude": drone_position["lon"],
-             "latitude": drone_position["lat"]
+             "lon": drone_position["lon"],
+             "lat": drone_position["lat"]
             },
             "gps_status": antenna_status,
             "port": port_address}
@@ -90,11 +91,6 @@ class S(BaseHTTPRequestHandler):
         elif parsed_path.path == "/map.html":
             global page
             self.wfile.write(self.create_map_page())
-        elif parsed_path.path == "/test":
-            self.send_response(200)
-            self.send_header("Content-type", "application/json")
-            self.end_headers()
-            self.wfile.write(json.dumps({"lat": 40, "lon": 60}))
         else:
             self.display_help()
 
@@ -122,19 +118,34 @@ class S(BaseHTTPRequestHandler):
         print decoded
         self._set_headers()
         if self.validate(decoded):
-            p = open_port_and_get_position()
-            a = azimuth(mean(self.lat_history), mean(self.lon_history) , decoded["lat"], decoded["lng"])
+            drone_position["lat"] = decoded["lat"]
+            drone_position["lon"] = decoded["lng"]
+            a = azimuth(antenna_position["lat"], antenna_position["lon"], decoded["lat"], decoded["lng"])
             move_to_expected_azimuth(a)
-            print a
-            self.wfile.write(str)
             self.wfile.write(field_data)
         else:
             self.wfile.write("not ok")
 
+
+def initiate():
+    global port_address
+    port_address = find_device_name_of_serial()
+    p = position_stabilizer(1, 20)
+    while not position_stabilizer.is_ready():
+        pos = open_port_and_get_position
+        if pos.gps_status == "A":
+            p.add_measurment(pos["latitude"], pos["longitude"])
+        time.sleep(2)
+    ant_pos = p.get_position()
+    global antenna_position
+    antenna_position["lat"] = ant_pos["lat"]
+    antenna_position["lon"] = ant_pos["lon"]
+
+
 def run(server_class=HTTPServer, handler_class=S, port=8086):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
- 
+
     print 'Starting httpd...'
     httpd.serve_forever()
 
