@@ -38,16 +38,24 @@ def create_help_page():
     return content
 
 
+def create_map_page():
+    content = ""
+    with open('map.html', 'r') as content_file:
+        content = content_file.read()
+
+    return content
+
+
 class S(BaseHTTPRequestHandler):
 
     def create_map_page(self):
         self.send_response(200)
         self.send_header("Content-type", "html")
         self.end_headers()
-        content = ""
-        with open('map.html', 'r') as content_file:
-            for l in content_file.readlines():
-                self.wfile.write(l)
+        self.wfile.write(create_map_page())
+        # with open('map.html', 'r') as content_file:
+        #     content = content_file.read()
+        #     self.wfile.write(content)
 
     def create_ble_page(self):
         self.send_response(200)
@@ -72,14 +80,16 @@ class S(BaseHTTPRequestHandler):
 
     def do_GET(self):
         parsed_path = urlparse.urlparse(self.path)
-        # self._set_headers
         if parsed_path.path == "/stat":
             self.display_status()
         elif parsed_path.path == "/map.html":
             global page
-            # self.wfile.write(page)
-            # self.create_ble_page()
             self.wfile.write(self.create_map_page())
+        elif parsed_path.path == "/test":
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps({"lat": 40, "lon": 60}))
         else:
             self.display_help()
 
