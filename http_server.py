@@ -15,7 +15,6 @@ from rotor_utils import open_port_and_get_position, find_device_name_of_serial, 
 import json
 import urlparse
 import time
-from geography import azimuth
 from numpy import mean
 from math_utils.position_stabilizer import position_stabilizer
 from frequency_lock import frequency_lock
@@ -147,7 +146,7 @@ def initiate():
     antenna_position["lon"] = ant_pos["lon"]
 
 
-def run(server_class=HTTPServer, handler_class=S, port=8086):
+def run(server_class=HTTPServer, handler_class=S, port=80):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     #initiate()

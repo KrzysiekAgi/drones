@@ -77,7 +77,6 @@
 				req.send(null);
 				if(req.status != 200)
   					alert("unexpected error");
-  				alert(req.responseText)
   				pos = JSON.parse(req.responseText);
 
 				var map = new google.maps.Map(document.getElementById("map"), {
