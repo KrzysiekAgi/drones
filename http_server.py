@@ -18,6 +18,7 @@ import time
 from numpy import mean
 from math_utils.position_stabilizer import position_stabilizer
 from frequency_lock import frequency_lock
+import sys
 
 drone_position = {"lat": 51.1048895, "lon": 17.0353508}
 antenna_position = {"lat": 51.1048895, "lon": 17.0343508, "azimuth": 10}
@@ -47,8 +48,9 @@ def create_status_page():
 
 
 def create_help_page():
+    f_path = sys.path[0]
     content = ""
-    with open('help', 'r') as content_file:
+    with open(f_path + '/help', 'r') as content_file:
         content = content_file.read()
 
     if content == "":
@@ -57,8 +59,9 @@ def create_help_page():
 
 
 def create_map_page():
+    f_path = sys.path[0]
     content = ""
-    with open('map.html', 'r') as content_file:
+    with open(f_path + '/map.html', 'r') as content_file:
         content = content_file.read()
 
     return content
@@ -146,7 +149,7 @@ def initiate():
     antenna_position["lon"] = ant_pos["lon"]
 
 
-def run(server_class=HTTPServer, handler_class=S, port=80):
+def run(server_class=HTTPServer, handler_class=S, port=8080):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     #initiate()
