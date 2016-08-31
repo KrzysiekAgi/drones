@@ -19,12 +19,13 @@ from numpy import mean
 from math_utils.position_stabilizer import position_stabilizer
 from frequency_lock import frequency_lock
 import sys
+from math_utils.geography import azimuth
 
 drone_position = {"lat": 51.1048895, "lon": 17.0353508}
 antenna_position = {"lat": 51.1048895, "lon": 17.0343508, "azimuth": 10}
 port_address = "some_strange_name"
 antenna_status = "notok"
-f_lock = frequency_lock(1)
+f_lock = frequency_lock(3)
 
 def create_status_page():
     # pos = open_port_and_get_position()
@@ -134,25 +135,26 @@ class S(BaseHTTPRequestHandler):
 def initiate():
     global port_address
     port_address = find_device_name_of_serial()
-    p = position_stabilizer(1, 20)
-    while not p.is_ready():
-        pos = open_port_and_get_position()
-        if pos.gps_status == "A":
-            print "position ok"
-            p.add_measurment(pos.latitude, pos.longitude)
-        else:
-            print "position notok"
-        time.sleep(2)
-    ant_pos = p.get_position()
+    # p = position_stabilizer(40, 10)
+    # while not p.is_ready():
+    #     pos = open_port_and_get_position()
+    #     if pos.gps_status == "A":
+    #         print "position ok"
+    #         p.add_measurment(pos.latitude, pos.longitude)
+    #     else:
+    #         print "position notok"
+    #     time.sleep(5)
+    # ant_pos = p.get_position()
     global antenna_position
-    antenna_position["lat"] = ant_pos["lat"]
-    antenna_position["lon"] = ant_pos["lon"]
-
+    # antenna_position["lat"] = ant_pos["lat"]
+    # antenna_position["lon"] = ant_pos["lon"]
+    antenna_position["lat"] = 51.107589 
+    antenna_position["lon"] = 17.059489
 
 def run(server_class=HTTPServer, handler_class=S, port=8080):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
-    #initiate()
+    initiate()
     print 'Starting httpd...'
     httpd.serve_forever()
 
