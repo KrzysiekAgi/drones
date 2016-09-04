@@ -20,6 +20,7 @@ from math_utils.position_stabilizer import position_stabilizer
 from frequency_lock import frequency_lock
 import sys
 from math_utils.geography import azimuth
+import re
 
 drone_position = {"lat": 51.1048895, "lon": 17.0353508}
 antenna_position = {"lat": 51.1048895, "lon": 17.0343508, "azimuth": 10}
@@ -67,6 +68,14 @@ def create_map_page():
 
     return content
 
+def antenna_position_page():
+    f_path = sys.path[0]
+    content = ""
+    with open(f_path + '/antenna_position.html', 'r') as content_file:
+        content = content_file.read()
+
+    return content  
+
 
 class S(BaseHTTPRequestHandler):
 
@@ -75,6 +84,12 @@ class S(BaseHTTPRequestHandler):
         self.send_header("Content-type", "html")
         self.end_headers()
         self.wfile.write(create_map_page())
+
+    def create_antenna_position_page(self):
+        self.send_response(200)
+        self.send_header("Content-type", "html")
+        self.end_headers()
+        self.wfile.write(antenna_position_page())
 
     def _set_headers(self):
         self.send_response(200)
@@ -93,8 +108,10 @@ class S(BaseHTTPRequestHandler):
         if parsed_path.path == "/stat":
             self.display_status()
         elif parsed_path.path == "/map.html":
-            global page
             self.wfile.write(self.create_map_page())
+        elif parsed_path.path == "/antenna_position.html":
+            self.wfile.write(self.create_antenna_position_page())
+            # self.wfile.write("lksdjf")
         else:
             self.display_help()
 
@@ -115,46 +132,43 @@ class S(BaseHTTPRequestHandler):
             return False
 
     def do_POST(self):
+        parsed_path = urlparse.urlparse(self.path)
         length = int(self.headers.getheader('content-length'))
         field_data = self.rfile.read(length)
         self.log(field_data)
-        decoded = json.loads(field_data)
-        print decoded
-        self._set_headers()
-        global f_lock
-        if self.validate(decoded) and f_lock.can_act():
-            drone_position["lat"] = decoded["lat"]
-            drone_position["lon"] = decoded["lng"]
-            a = azimuth(antenna_position["lat"], antenna_position["lon"], decoded["lat"], decoded["lng"])
-            move_to_expected_azimuth(a)
-            self.wfile.write(field_data)
+        if parsed_path.path == "/init_antenna.html":
+            # print field_data
+            r = "lon=(.*)&lat=(.*)"
+            result = re.search(r, field_data)
+            print result.group(1)
+            print result.group(2)
+            self.wfile.write("lksdjf")
         else:
-            self.wfile.write("not ok")
+            decoded = json.loads(field_data)
+            print decoded
+            self._set_headers()
+            global f_lock
+            if self.validate(decoded) and f_lock.can_act():
+                drone_position["lat"] = decoded["lat"]
+                drone_position["lon"] = decoded["lng"]
+                a = azimuth(antenna_position["lat"], antenna_position["lon"], decoded["lat"], decoded["lng"])
+                move_to_expected_azimuth(a)
+                self.wfile.write(field_data)
+            else:
+                self.wfile.write("not ok")
 
 
 def initiate():
     global port_address
     port_address = find_device_name_of_serial()
-    # p = position_stabilizer(40, 10)
-    # while not p.is_ready():
-    #     pos = open_port_and_get_position()
-    #     if pos.gps_status == "A":
-    #         print "position ok"
-    #         p.add_measurment(pos.latitude, pos.longitude)
-    #     else:
-    #         print "position notok"
-    #     time.sleep(5)
-    # ant_pos = p.get_position()
     global antenna_position
-    # antenna_position["lat"] = ant_pos["lat"]
-    # antenna_position["lon"] = ant_pos["lon"]
     antenna_position["lat"] = 51.107589 
     antenna_position["lon"] = 17.059489
 
-def run(server_class=HTTPServer, handler_class=S, port=8080):
+def run(server_class=HTTPServer, handler_class=S, port=8081):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
-    initiate()
+    # initiate()
     print 'Starting httpd...'
     httpd.serve_forever()
 
