@@ -48,34 +48,15 @@ def create_status_page():
             "port": port_address}
     return resp
 
-
-def create_help_page():
+def create_page(location):
     f_path = sys.path[0]
     content = ""
-    with open(f_path + '/help', 'r') as content_file:
+    with open(f_path + location, 'r') as content_file:
         content = content_file.read()
 
     if content == "":
         content = "unexpected error occured"
-    return content
-
-
-def create_map_page():
-    f_path = sys.path[0]
-    content = ""
-    with open(f_path + '/map.html', 'r') as content_file:
-        content = content_file.read()
-
-    return content
-
-def antenna_position_page():
-    f_path = sys.path[0]
-    content = ""
-    with open(f_path + '/antenna_position.html', 'r') as content_file:
-        content = content_file.read()
-
-    return content  
-
+    return content    
 
 class S(BaseHTTPRequestHandler):
 
@@ -83,13 +64,13 @@ class S(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "html")
         self.end_headers()
-        self.wfile.write(create_map_page())
+        self.wfile.write(create_page("/web_pages/map.html"))
 
     def create_antenna_position_page(self):
         self.send_response(200)
         self.send_header("Content-type", "html")
         self.end_headers()
-        self.wfile.write(antenna_position_page())
+        self.wfile.write(create_page("/web_pages/antenna_position.html"))
 
     def _set_headers(self):
         self.send_response(200)
@@ -97,7 +78,7 @@ class S(BaseHTTPRequestHandler):
         self.end_headers()
 
     def display_help(self):
-        self.wfile.write(create_help_page())   
+        self.wfile.write(create_page("/web_pages/help"))   
 
     def display_status(self):
         resp = create_status_page()
