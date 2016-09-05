@@ -78,7 +78,7 @@ class S(BaseHTTPRequestHandler):
         elif parsed_path.path == "/map.html":
             self.present_page(create_page("/web_pages/map.html"))
         elif parsed_path.path == "/antenna_position.html":
-            self.present_page(create_page("antenna_position.html"))
+            self.present_page(create_page("/antenna_position.html"))
         else:
             self.present_page(create_page("/web_pages/help"))
 
