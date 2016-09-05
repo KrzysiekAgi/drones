@@ -46,7 +46,7 @@ def create_status_page():
             },
             "gps_status": antenna_status,
             "port": port_address}
-    return resp
+    return json.dumps(resp)
 
 def create_page(location):
     f_path = sys.path[0]
@@ -60,41 +60,27 @@ def create_page(location):
 
 class S(BaseHTTPRequestHandler):
 
-    def create_map_page(self):
+    def present_page(self, page):
         self.send_response(200)
-        self.send_header("Content-type", "html")
+        self.send_header("Content-type", "text/html")
         self.end_headers()
-        self.wfile.write(create_page("/web_pages/map.html"))
-
-    def create_antenna_position_page(self):
-        self.send_response(200)
-        self.send_header("Content-type", "html")
-        self.end_headers()
-        self.wfile.write(create_page("/web_pages/antenna_position.html"))
+        self.wfile.write(page)     
 
     def _set_headers(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
-    def display_help(self):
-        self.wfile.write(create_page("/web_pages/help"))   
-
-    def display_status(self):
-        resp = create_status_page()
-        self.wfile.write(json.dumps(resp))
-
     def do_GET(self):
         parsed_path = urlparse.urlparse(self.path)
         if parsed_path.path == "/stat":
-            self.display_status()
+            self.present_page(create_status_page())
         elif parsed_path.path == "/map.html":
-            self.wfile.write(self.create_map_page())
+            self.present_page(create_page("/web_pages/map.html"))
         elif parsed_path.path == "/antenna_position.html":
-            self.wfile.write(self.create_antenna_position_page())
-            # self.wfile.write("lksdjf")
+            self.present_page(create_page("antenna_position.html"))
         else:
-            self.display_help()
+            self.present_page(create_page("/web_pages/help"))
 
     def do_HEAD(self):
         self._set_headers()
@@ -112,32 +98,36 @@ class S(BaseHTTPRequestHandler):
         else:
             return False
 
+    def handle_post_drone_position(self, filed_data):
+        decoded = json.loads(field_data)
+        print decoded
+        self._set_headers()
+        global f_lock
+        if self.validate(decoded) and f_lock.can_act():
+            drone_position["lat"] = decoded["lat"]
+            drone_position["lon"] = decoded["lng"]
+            a = azimuth(antenna_position["lat"], antenna_position["lon"], decoded["lat"], decoded["lng"])
+            move_to_expected_azimuth(a)
+            self.wfile.write(field_data)
+        else:
+            self.wfile.write("not ok")
+
+    def handle_post_initiate_antenna(self, filed_data):
+        initiate()
+        # r = "lon=(.*)&lat=(.*)"
+        # result = re.search(r, field_data)
+        # print result.group(1)
+        # print result.group(2)        
+
     def do_POST(self):
         parsed_path = urlparse.urlparse(self.path)
         length = int(self.headers.getheader('content-length'))
         field_data = self.rfile.read(length)
         self.log(field_data)
         if parsed_path.path == "/init_antenna.html":
-            # print field_data
-            r = "lon=(.*)&lat=(.*)"
-            result = re.search(r, field_data)
-            print result.group(1)
-            print result.group(2)
-            self.wfile.write("lksdjf")
+            self.handle_post_initiate_antenna(field_data)
         else:
-            decoded = json.loads(field_data)
-            print decoded
-            self._set_headers()
-            global f_lock
-            if self.validate(decoded) and f_lock.can_act():
-                drone_position["lat"] = decoded["lat"]
-                drone_position["lon"] = decoded["lng"]
-                a = azimuth(antenna_position["lat"], antenna_position["lon"], decoded["lat"], decoded["lng"])
-                move_to_expected_azimuth(a)
-                self.wfile.write(field_data)
-            else:
-                self.wfile.write("not ok")
-
+            self.handle_post_drone_position(filed_data)
 
 def initiate():
     global port_address
