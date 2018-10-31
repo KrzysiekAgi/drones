@@ -1,2 +1,2 @@
-# drones
-function counting azimuth and elevation angles getting positions GCS and drone in degrees
+# Drones
+Part of project for UAV Challenge: Medical Express 2016, created with Rafał Kurda, as part of ArsNumerika:JetStream Team
